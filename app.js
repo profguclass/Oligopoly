@@ -63,6 +63,66 @@ const MODELS = [
     params:[...COMMON,["c","한계비용 $c$",0,60,1,10]] },
 ];
 
+const STEPS = {
+cournot:[
+ ["이윤함수 전개","$$\\pi_1=[a-b(q_1+q_2)-c]\\,q_1=(a-c)\\,q_1-b\\,q_1^2-b\\,q_1q_2$$"],
+ ["1계 조건 ($q_2$ 고정)","$$\\frac{\\partial\\pi_1}{\\partial q_1}=(a-c)-2b\\,q_1-b\\,q_2=0$$"],
+ ["반응함수","$$q_1^*(q_2)=\\frac{a-c}{2b}-\\frac12\\,q_2,\\qquad q_2^*(q_1)=\\frac{a-c}{2b}-\\frac12\\,q_1$$<p>상대 생산량이 늘면 내 최적 생산량은 줄어든다(전략적 대체재).</p>"],
+ ["두 반응함수를 연립","$$q_1=\\frac{a-c}{2b}-\\frac{q_2}{2},\\qquad q_2=\\frac{a-c}{2b}-\\frac{q_1}{2}$$"],
+ ["대입하여 정리","$$q_1=\\frac{a-c}{2b}-\\frac12\\left(\\frac{a-c}{2b}-\\frac{q_1}{2}\\right)=\\frac{a-c}{4b}+\\frac{q_1}{4}\\;\\Rightarrow\\;\\frac34\\,q_1=\\frac{a-c}{4b}$$"],
+ ["균형 확정","$$q_1^*=q_2^*=\\frac{a-c}{3b},\\quad Q^*=\\frac{2(a-c)}{3b},\\quad P^*=\\frac{a+2c}{3},\\quad \\pi^*=\\frac{(a-c)^2}{9b}$$"],
+ ["담합: 합동이윤 극대화","$$\\max\\;\\Pi=[a-bQ-c]\\,Q\\;\\Rightarrow\\;Q^m=\\frac{a-c}{2b},\\quad q_i^m=\\frac{a-c}{4b},\\quad \\pi_i^m=\\frac{(a-c)^2}{8b}>\\frac{(a-c)^2}{9b}$$"],
+ ["담합이 무너지는 이유","<p>담합 1계 조건 $\\partial\\pi_1/\\partial q_1=-\\partial\\pi_2/\\partial q_1$ 이고 $\\partial\\pi_2/\\partial q_1=-b\\,q_2<0$ 이므로</p>$$\\left.\\frac{\\partial\\pi_1}{\\partial q_1}\\right|_{q^m}=b\\,q_2^m>0$$<p>기업 1은 약속을 어기고 생산량을 늘릴 유인이 있다. 기업 2도 마찬가지이므로 담합은 균형이 아니다.</p>"]],
+bertrand:[
+ ["설정","<p>동질재, 두 기업이 가격을 동시에 설정하고 소비자는 더 낮은 가격의 기업에서만 산다.</p>"],
+ ["높은 가격은 이탈 유인","$$p_1>p_2>c\\;\\Rightarrow\\;\\text{기업 1은 시장을 모두 잃음}\\;\\Rightarrow\\;p_1=p_2-\\varepsilon$$"],
+ ["상대도 응수","$$p_2=p_1-\\varepsilon\\;\\to\\;\\text{가격 인하 경쟁이 반복}$$"],
+ ["균형","$$p_1^*=p_2^*=c\\;\\Rightarrow\\;\\pi_1^*=\\pi_2^*=0$$<p>단 두 기업만 있어도 가격이 한계비용까지 내려간다(베르트랑 역설).</p>"],
+ ["역설이 현실에 없는 이유","<p>(1) 생산용량 제약 (2) 제품 차별화 (3) 반복게임 (4) 규모의 비경제</p>"]],
+stackelberg:[
+ ["추종자의 최적화","$$\\max_{q_2}\\;\\pi_2=[a-b(q_1+q_2)-c]\\,q_2\\;\\Rightarrow\\;\\frac{\\partial\\pi_2}{\\partial q_2}=a-bq_1-2bq_2-c=0$$"],
+ ["추종자의 반응함수","$$q_2^*(q_1)=\\frac{a-c}{2b}-\\frac{q_1}{2}$$<p>쿠르노와 같은 식이지만 추종자는 $q_1$을 확정된 값으로 관찰한다.</p>"],
+ ["선도자: 반응을 이윤에 대입","$$\\pi_1=\\left[a-bq_1-b\\left(\\frac{a-c}{2b}-\\frac{q_1}{2}\\right)-c\\right]q_1=\\frac{(a-c)\\,q_1}{2}-\\frac{b\\,q_1^2}{2}$$"],
+ ["선도자의 1계 조건","$$\\frac{d\\pi_1}{dq_1}=\\frac{a-c}{2}-b\\,q_1=0\\;\\Rightarrow\\;q_1^S=\\frac{a-c}{2b}$$"],
+ ["균형 완성","$$q_2^S=\\frac{a-c}{4b},\\quad Q^S=\\frac{3(a-c)}{4b},\\quad P^S=\\frac{a+3c}{4}$$$$\\pi_1^S=\\frac{(a-c)^2}{8b},\\quad \\pi_2^S=\\frac{(a-c)^2}{16b}$$"],
+ ["비용이 다른 경우","$$q_1^S=\\frac{a-2c_1+c_2}{2b},\\qquad q_2^S=\\frac{a+2c_1-3c_2}{4b}$$<p>$c_1=c_2$이면 위 대칭 결과로 돌아간다.</p>"]],
+differentiated:[
+ ["역수요","$$P_1=\\alpha-\\beta q_1-\\gamma q_2,\\qquad P_2=\\alpha-\\beta q_2-\\gamma q_1\\qquad(\\beta>\\gamma>0)$$"],
+ ["수요함수 (역함수)","$$q_1=\\underbrace{\\frac{\\alpha}{\\beta+\\gamma}}_{a}-\\underbrace{\\frac{\\beta}{\\beta^2-\\gamma^2}}_{b}\\,p_1+\\underbrace{\\frac{\\gamma}{\\beta^2-\\gamma^2}}_{d}\\,p_2$$"],
+ ["베르트랑: 1계 조건","$$\\pi_1=(p_1-c)(a-bp_1+dp_2)\\;\\Rightarrow\\;\\frac{\\partial\\pi_1}{\\partial p_1}=a-2bp_1+dp_2+bc=0$$"],
+ ["반응함수","$$p_1^*(p_2)=\\frac{a+bc}{2b}+\\frac{d}{2b}\\,p_2$$<p>$d>0$이므로 우상향 — 가격은 전략적 보완재.</p>"],
+ ["대칭 균형","$$p_1\\!\\left(1-\\frac{d^2}{4b^2}\\right)=\\frac{(a+bc)(2b+d)}{4b^2}\\;\\Rightarrow\\;p^*=\\frac{a+bc}{2b-d}$$"],
+ ["쿠르노 균형 (같은 수요)","$$q^*=\\frac{\\alpha-c}{2\\beta+\\gamma}$$<p>같은 수요에서 베르트랑 가격이 쿠르노 가격보다 낮다.</p>"],
+ ["순차 가격: 후발자의 반응","<p>$m_i=p_i-c$, $A=a-(b-d)c$로 두면 $D_2=A-bm_2+dm_1$.</p>$$\\frac{\\partial\\pi_2}{\\partial m_2}=D_2-b\\,m_2=0\\;\\Rightarrow\\;m_2(m_1)=\\frac{A+d\\,m_1}{2b}$$"],
+ ["순차 가격: 선도자","<p>선도자는 $m_2(m_1)$을 대입한 $\\pi_1=m_1\\,[A-bm_1+d\\,m_2(m_1)]$을 극대화한다. 가격은 보완재라 선도자가 높은 가격을 정하면 후발자도 높게 응수하므로 후발자가 더 높은 이윤을 얻는다.</p>"]],
+entry:[
+ ["$n$기업 쿠르노 1계 조건","$$a-2bq_i-bQ_{-i}-c=0,\\qquad Q_{-i}=(n-1)q$$"],
+ ["대칭 균형","$$(n+1)\\,b\\,q=a-c\\;\\Rightarrow\\;q(n)=\\frac{a-c}{b(n+1)}$$$$P(n)=\\frac{a+nc}{n+1},\\qquad \\pi(n)=\\frac1b\\left(\\frac{a-c}{n+1}\\right)^2$$"],
+ ["자유진입 균형","$$\\pi(n^e)-e=0\\;\\Longleftrightarrow\\;(n^e+1)^2=\\frac{(a-c)^2}{b\\,e}$$"],
+ ["사회후생","$$Q(n)=\\frac{n(a-c)}{b(n+1)},\\quad CS=\\frac b2Q^2$$$$W(n)=\\frac{(a-c)^2}{2b}\\left[1-\\frac{1}{(n+1)^2}\\right]-n\\,e$$"],
+ ["사회적 최적","$$W'(n^*)=\\frac{(a-c)^2}{b}\\frac{1}{(n^*+1)^3}-e=0\\;\\Longleftrightarrow\\;(n^*+1)^3=\\frac{(a-c)^2}{b\\,e}$$<p>$(n^e+1)^2=(n^*+1)^3$ 이므로 $n^e>n^*$ — 자유진입은 사회적 최적보다 기업이 많다(사업 빼앗기 효과).</p>"]],
+conduct:[
+ ["행태 모수를 넣은 한계수입","$$MR(\\lambda)=P+\\lambda\\,P'(Q)\\,Q$$<p>$\\lambda=0$ 완전경쟁, $\\lambda=1$ 독점, $\\lambda=1/n$ $n$기업 쿠르노.</p>"],
+ ["균형 조건","$$P+\\lambda P'(Q)Q=c\\;\\Rightarrow\\;P-c=-\\lambda P'(Q)\\,Q$$"],
+ ["러너지수","$$L=\\frac{P-c}{P}=-\\lambda\\frac{\\partial P}{\\partial Q}\\frac QP=\\frac{\\lambda}{\\eta}$$"],
+ ["식별 문제","<p>선형 수요·비용을 대입하면 $p=\\beta_0+(\\beta_1+\\lambda\\alpha_1)\\,q+\\beta_2 w$. 수요가 평행이동만 하면 기울기 $\\beta_1+\\lambda\\alpha_1$만 추정되어 $\\beta_1$과 $\\lambda$를 구별할 수 없다.</p>"]],
+compare:[
+ ["완전경쟁","$$Q=\\frac{a-c}{b},\\quad P=c,\\quad \\Pi=0$$"],
+ ["스타켈베르크","$$Q=\\frac{3(a-c)}{4b},\\quad P=\\frac{a+3c}{4},\\quad \\Pi=\\frac{3(a-c)^2}{16b}$$"],
+ ["쿠르노","$$Q=\\frac{2(a-c)}{3b},\\quad P=\\frac{a+2c}{3},\\quad \\Pi=\\frac{2(a-c)^2}{9b}$$"],
+ ["독점","$$Q=\\frac{a-c}{2b},\\quad P=\\frac{a+c}{2},\\quad \\Pi=\\frac{(a-c)^2}{4b}$$"]]
+};
+let shown = 0;
+function renderSteps() {
+  const st = STEPS[cur.id] || [];
+  $("steps").innerHTML = st.slice(0, shown).map(([t, h], i) =>
+    `<li><h3>Step ${i + 1}. ${t}</h3><div>${h}</div></li>`).join("");
+  typeset($("steps"));
+  $("next").disabled = shown >= st.length;
+  $("next").textContent = shown >= st.length ? "마지막 단계예요" : (shown ? "다음 단계 보기" : "풀이 시작");
+  $("stepcount").textContent = `${shown} / ${st.length}`;
+}
+
 const $ = id => document.getElementById(id);
 const DELIMS = [{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}];
 function typeset(...els) {
@@ -93,6 +153,7 @@ function selectModel(m) {
   const i = src.search(re);
   let j = src.slice(i + 1).search(/^(def |# -{5,})/m);
   $("code").textContent = src.slice(i, j < 0 ? undefined : i + 1 + j).trim();
+  shown = 0; renderSteps();
   run();
 }
 
@@ -123,3 +184,6 @@ async function main() {
 }
 main().catch(e => { $("loading").textContent = "불러오지 못했어요. 새로고침해 주세요. (" + e.message + ")"; });
 $("reset").onclick = () => cur && selectModel(cur);
+$("next").onclick = () => { shown++; renderSteps(); $("steps").lastElementChild?.scrollIntoView({block:"nearest", behavior:"smooth"}); };
+$("all").onclick = () => { shown = (STEPS[cur.id] || []).length; renderSteps(); };
+$("fold").onclick = () => { shown = 0; renderSteps(); };
