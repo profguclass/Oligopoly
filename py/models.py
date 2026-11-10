@@ -96,14 +96,14 @@ def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
     C.set_title("Total profit")
 
     dev_gain = (a - b * (qd + qm2) - c1) * qd - pim1
-    rows = [("쿠르노 균형 생산량 (q₁, q₂)", f"{_f(q1e)}, {_f(q2e)}"),
-            ("균형 가격 P*", _f(P)),
-            ("균형 이윤 (π₁, π₂)", f"{_f(pi1)}, {_f(pi2)}"),
-            ("담합 생산량 (q₁, q₂)", f"{_f(qm1)}, {_f(qm2)}"),
+    rows = [("쿠르노 균형 생산량 $(q_1^*,q_2^*)$", f"{_f(q1e)}, {_f(q2e)}"),
+            ("균형 가격 $P^*$", _f(P)),
+            ("균형 이윤 $(\\pi_1^*,\\pi_2^*)$", f"{_f(pi1)}, {_f(pi2)}"),
+            ("담합 생산량 $(q_1^m,q_2^m)$", f"{_f(qm1)}, {_f(qm2)}"),
             ("담합 가격", _f(Pm)),
-            ("담합 이윤 (π₁, π₂)", f"{_f(pim1)}, {_f(pim2)}"),
-            ("담합 이탈 시 기업 1의 추가 이득", _f(dev_gain))]
-    return _out(fig, rows, "담합점에서 ∂π₁/∂q₁ = b·q₂ᵐ > 0 이므로 기업 1은 항상 생산량을 늘릴 유인이 있습니다.")
+            ("담합 이윤 $(\\pi_1^m,\\pi_2^m)$", f"{_f(pim1)}, {_f(pim2)}"),
+            ("담합 이탈 시 기업 1의 추가 이득 $\\Delta\\pi_1$", _f(dev_gain))]
+    return _out(fig, rows, r"담합점에서 $\partial\pi_1/\partial q_1 = b\,q_2^m > 0$ 이므로 기업 1은 항상 생산량을 늘릴 유인이 있습니다.")
 
 
 # ------------------------------------------------------------- 베르트랑
@@ -142,11 +142,11 @@ def bertrand(a=100, b=1, c1=10, c2=10, p1_0=80, p2_0=75, eps=2, rounds=80):
     ax[1].axvline(p2f, color=C2, ls="--", lw=1, label=f"rival price = {_f(p2f, 1)}")
     ax[1].set_xlabel("p1"); ax[1].set_ylabel("profit of firm 1")
     ax[1].set_title("Firm 1 profit given p2 (discontinuous)"); ax[1].legend(fontsize=8)
-    rows = [("최종 가격 (p₁, p₂)", f"{_f(h1[-1])}, {_f(h2[-1])}"),
-            ("이론적 균형 가격", _f(pe)),
+    rows = [("최종 가격 $(p_1,p_2)$", f"{_f(h1[-1])}, {_f(h2[-1])}"),
+            ("이론적 균형 가격 $p^*$", _f(pe)),
             ("균형 이윤 합계", _f(pr)),
             ("시장 공급 기업", win)]
-    return _out(fig, rows, "비용이 같으면 p* = c, 이윤 0 (베르트랑 역설). 비용이 다르면 저비용 기업이 상대의 비용 바로 밑에서 시장 전체를 공급합니다.")
+    return _out(fig, rows, "비용이 같으면 $p^* = c$, 이윤 0 (베르트랑 역설). 비용이 다르면 저비용 기업이 상대의 비용 바로 밑에서 시장 전체를 공급합니다.")
 
 
 # --------------------------------------------------------- 스타켈베르크
@@ -176,10 +176,10 @@ def stackelberg(a=100, b=1, c1=10, c2=10):
     B.bar(x - w / 2, pic, w, label="Cournot", color=GR)
     B.bar(x + w / 2, pis, w, label="Stackelberg", color=C3)
     B.set_xticks(x, ["leader (1)", "follower (2)"]); B.legend(); B.set_title("Profits")
-    rows = [("스타켈베르크 (q₁ˢ, q₂ˢ)", f"{_f(q1s)}, {_f(q2s)}"),
-            ("가격 Pˢ", _f(Ps)), ("이윤 (π₁ˢ, π₂ˢ)", f"{_f(pis[0])}, {_f(pis[1])}"),
-            ("쿠르노 이윤 (π₁, π₂)", f"{_f(pic[0])}, {_f(pic[1])}"),
-            ("선도자 이점 π₁ˢ − π₁", _f(pis[0] - pic[0]))]
+    rows = [("스타켈베르크 $(q_1^S,q_2^S)$", f"{_f(q1s)}, {_f(q2s)}"),
+            ("가격 $P^S$", _f(Ps)), ("이윤 $(\\pi_1^S,\\pi_2^S)$", f"{_f(pis[0])}, {_f(pis[1])}"),
+            ("쿠르노 이윤 $(\\pi_1^C,\\pi_2^C)$", f"{_f(pic[0])}, {_f(pic[1])}"),
+            ("선도자 이점 $\\pi_1^S-\\pi_1^C$", _f(pis[0] - pic[0]))]
     return _out(fig, rows, "선도자는 추종자의 반응함수 위에서 가장 높은 등이윤곡선에 닿는 점을 고릅니다. 수량은 전략적 대체재라서 먼저 움직이는 쪽이 유리합니다.")
 
 
@@ -232,10 +232,10 @@ def differentiated(alpha=100, beta=1.0, gamma=0.6, c=10):
     ax[2].axvline(gamma / beta, color=GR, ls=":")
     ax[2].set_xlabel("substitutability γ/β"); ax[2].set_ylabel("profit per firm")
     ax[2].legend(); ax[2].set_title("Profit shrinks as goods get closer")
-    rows = [("수요계수 (a, b, d)", f"{_f(a)}, {_f(b, 3)}, {_f(d, 3)}"),
+    rows = [("수요계수 $(a,b,d)$", f"{_f(a)}, {_f(b, 3)}, {_f(d, 3)}"),
             ("베르트랑 가격 / 기업당 이윤", f"{_f(pB)} / {_f(piB)}"),
             ("쿠르노 가격 / 기업당 이윤", f"{_f(pC)} / {_f(piC)}"),
-            ("순차 가격: 선도자 p₁ / 후발자 p₂", f"{_f(p1s)} / {_f(p2s)}"),
+            ("순차 가격: 선도자 $p_1$ / 후발자 $p_2$", f"{_f(p1s)} / {_f(p2s)}"),
             ("순차 가격 이윤 (선도자, 후발자)", f"{_f(pi1s)}, {_f(pi2s)}")]
     return _out(fig, rows, "같은 수요 구조(Singh–Vives)에서 가격경쟁이 수량경쟁보다 더 치열합니다. 가격은 전략적 보완재라서 후발자가 유리합니다.")
 
@@ -263,10 +263,10 @@ def entry(a=100, b=1, c=10, e=40, nmax=15):
     ax[2].axvline(ns, color=C3, ls="--", label=f"social optimum n* = {ns}")
     ax[2].axvline(max(ne, 1), color=C2, ls="--", label=f"free entry = {ne}")
     ax[2].set_xlabel("n"); ax[2].set_title("Welfare = CS + profits − entry cost"); ax[2].legend()
-    rows = [("자유진입 균형 기업 수 nᵉ", ne),
-            ("사회적 최적 기업 수", ns),
-            ("nᵉ에서 기업당 이윤(진입비용 차감 전)", _f(pin[ne - 1]) if ne else "-"),
-            ("nᵉ에서 가격", _f(Pn[ne - 1]) if ne else "-")]
+    rows = [("자유진입 균형 기업 수 $n^e$", ne),
+            ("사회적 최적 기업 수 $n^*$", ns),
+            ("$n^e$에서 기업당 이윤 $\\pi(n^e)$", _f(pin[ne - 1]) if ne else "-"),
+            ("$n^e$에서 가격", _f(Pn[ne - 1]) if ne else "-")]
     return _out(fig, rows, "진입비용 e가 커지면 시장에 들어오는 기업 수가 줄어듭니다. 사업 빼앗기 효과 때문에 자유진입은 사회적 최적보다 기업이 많은 경우가 흔합니다.")
 
 
@@ -290,9 +290,9 @@ def conduct(a=100, b=1, c=20, lam=0.5):
         ax[1].annotate(t, (l, (a - b * Q(l) - c) / (a - b * Q(l))), fontsize=7)
     ax[1].set_xlabel("conduct parameter λ"); ax[1].set_ylabel("Lerner index L")
     ax[1].set_title("L = λ/η")
-    rows = [("시장 생산량 Q", _f(q)), ("가격 P", _f(p)),
-            ("수요의 가격탄력성 η", _f(eta)), ("러너지수 L=(P−c)/P", _f(L, 3)), ("λ/η (검산)", _f(lam / eta, 3))]
-    return _out(fig, rows, "λ=0 완전경쟁, λ=1/n n기업 쿠르노, λ=1 독점. 관측된 가격·수량만으로는 λ와 한계비용 기울기를 구별하기 어렵습니다(식별 문제).")
+    rows = [("시장 생산량 $Q$", _f(q)), ("가격 $P$", _f(p)),
+            ("수요의 가격탄력성 $\\eta$", _f(eta)), ("러너지수 $L=(P-c)/P$", _f(L, 3)), ("$\\lambda/\\eta$ (검산)", _f(lam / eta, 3))]
+    return _out(fig, rows, r"$\lambda=0$ 완전경쟁, $\lambda=1/n$ $n$기업 쿠르노, $\lambda=1$ 독점. 관측된 가격·수량만으로는 $\lambda$와 한계비용 기울기를 구별하기 어렵습니다(식별 문제).")
 
 
 # ------------------------------------------------------------ 모형 비교
