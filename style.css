@@ -10,7 +10,7 @@ nav button[aria-selected=true]{background:var(--accent);color:#fff;border-color:
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 main{max-width:1280px;margin:auto;padding:8px 20px 24px}
 #loading{padding:40px;text-align:center;color:var(--mut)}
-.grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start}
 aside,.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
 h2{margin:0 0 6px;font-size:1.15rem;letter-spacing:-.01em}
 #theory{font-size:.88rem;color:#374151;margin-bottom:12px}
@@ -32,3 +32,5 @@ pre{overflow:auto;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:8p
 footer{max-width:1280px;margin:auto;padding:0 20px 32px;color:var(--mut);font-size:.82rem}
 .busy #plot{opacity:.5}
 @media(max-width:860px){.grid{grid-template-columns:1fr}}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+#theory .katex{font-size:1.05em}
