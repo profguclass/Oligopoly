@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use("AGG")
 import matplotlib.pyplot as plt
 
+QAX, PAX = 200, 150  # 고정 축 범위
 C1, C2, C3, GR = "#2563eb", "#dc2626", "#16a34a", "#6b7280"
 plt.rcParams.update({"axes.grid": True, "grid.alpha": .25, "axes.spines.top": False,
                      "axes.spines.right": False, "font.size": 9})
@@ -54,7 +55,7 @@ def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
 
     fig, ax = plt.subplots(1, 3, figsize=(11, 4.4))
     qmax = (a - min(c1, c2)) / b
-    g = np.linspace(0, qmax, 200)
+    g = np.linspace(0, QAX, 200)
     A = ax[0]
     A.plot(br1(g), g, color=C1, label="R1 (firm 1 best response)")
     A.plot(g, br2(g), color=C2, label="R2 (firm 2 best response)")
@@ -69,19 +70,20 @@ def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
     A.plot([start1], [start2], "s", color="k", ms=5)
     A.plot(q1e, q2e, "o", color="k", ms=9, label="Cournot-Nash")
     A.plot(qm1, qm2, "*", color=C3, ms=13, label="cartel")
-    A.set_xlim(0, qmax); A.set_ylim(0, qmax)
+    A.set_xlim(0, QAX); A.set_ylim(0, QAX)
     A.set_xlabel("q1"); A.set_ylabel("q2"); A.set_title("Best responses & adjustment")
     A.legend(fontsize=7)
 
     # 담합 이탈
     B = ax[1]
-    g1 = np.linspace(0, qmax, 200)
+    g1 = np.linspace(0, QAX, 200)
     dev = (a - b * (g1 + qm2) - c1) * g1
     B.plot(g1, dev, color=C1)
     qd = float(br1(qm2))
     B.plot(qm1, pim1, "*", color=C3, ms=13, label=f"cartel q1={_f(qm1)}")
     B.plot(qd, (a - b * (qd + qm2) - c1) * qd, "o", color=C2, ms=8,
            label=f"best deviation q1={_f(qd)}")
+    B.set_xlim(0, QAX); B.set_ylim(-3000, 4000)
     B.set_xlabel("q1"); B.set_ylabel("profit of firm 1 (q2 at cartel level)")
     B.set_title("Why collusion collapses"); B.legend(fontsize=7)
 
@@ -93,7 +95,7 @@ def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
     C.bar(labs, tot, color=[GR, C1, C3])
     for i, v in enumerate(tot):
         C.text(i, v, _f(v, 1), ha="center", va="bottom", fontsize=8)
-    C.set_title("Total profit")
+    C.set_ylim(0, 8000); C.set_title("Total profit")
 
     dev_gain = (a - b * (qd + qm2) - c1) * qd - pim1
     rows = [("쿠르노 균형 생산량 $(q_1^*,q_2^*)$", f"{_f(q1e)}, {_f(q2e)}"),
@@ -131,15 +133,17 @@ def bertrand(a=100, b=1, c1=10, c2=10, p1_0=80, p2_0=75, eps=2, rounds=80):
     ax[0].plot(h1, "-o", ms=3, color=C1, label="p1")
     ax[0].plot(h2, "-o", ms=3, color=C2, label="p2")
     ax[0].axhline(c1, color=C1, ls=":", lw=1); ax[0].axhline(c2, color=C2, ls=":", lw=1)
+    ax[0].set_xlim(0, 150); ax[0].set_ylim(0, PAX)
     ax[0].set_xlabel("round"); ax[0].set_ylabel("price"); ax[0].legend()
     ax[0].set_title("Undercutting war (dotted = marginal cost)")
     # 기업 1의 이윤 함수 (p2 고정)
-    pg = np.linspace(0, a, 400)
+    pg = np.linspace(0, PAX, 600)
     p2f = p2
     D = np.maximum((a - pg) / b, 0)
     share = np.where(pg < p2f, 1.0, np.where(pg == p2f, .5, 0.0))
     ax[1].plot(pg, (pg - c1) * D * share, color=C1)
     ax[1].axvline(p2f, color=C2, ls="--", lw=1, label=f"rival price = {_f(p2f, 1)}")
+    ax[1].set_xlim(0, PAX); ax[1].set_ylim(-2000, 4000)
     ax[1].set_xlabel("p1"); ax[1].set_ylabel("profit of firm 1")
     ax[1].set_title("Firm 1 profit given p2 (discontinuous)"); ax[1].legend(fontsize=8)
     rows = [("최종 가격 $(p_1,p_2)$", f"{_f(h1[-1])}, {_f(h2[-1])}"),
@@ -158,7 +162,7 @@ def stackelberg(a=100, b=1, c1=10, c2=10):
     pic = ((Pc - c1) * q1c, (Pc - c2) * q2c)
     pis = ((Ps - c1) * q1s, (Ps - c2) * q2s)
     qmax = (a - min(c1, c2)) / b
-    g = np.linspace(0.01, qmax, 400)
+    g = np.linspace(0.01, QAX, 600)
     fig, ax = plt.subplots(1, 2, figsize=(10.5, 4.4))
     A = ax[0]
     A.plot(np.maximum((a - c1) / (2 * b) - g / 2, 0), g, color=C1, label="R1")
@@ -169,13 +173,13 @@ def stackelberg(a=100, b=1, c1=10, c2=10):
                label=f"iso-profit of 1 = {_f(k, 0)}")
     A.plot(q1c, q2c, "o", color="k", label="Cournot")
     A.plot(q1s, q2s, "*", color=C3, ms=13, label="Stackelberg")
-    A.set_xlim(0, qmax); A.set_ylim(0, qmax); A.set_xlabel("q1 (leader)"); A.set_ylabel("q2")
+    A.set_xlim(0, QAX); A.set_ylim(0, QAX); A.set_xlabel("q1 (leader)"); A.set_ylabel("q2")
     A.set_title("Leader picks the best point on R2"); A.legend(fontsize=7)
     B = ax[1]
     x = np.arange(2); w = .35
     B.bar(x - w / 2, pic, w, label="Cournot", color=GR)
     B.bar(x + w / 2, pis, w, label="Stackelberg", color=C3)
-    B.set_xticks(x, ["leader (1)", "follower (2)"]); B.legend(); B.set_title("Profits")
+    B.set_xticks(x, ["leader (1)", "follower (2)"]); B.set_ylim(0, 4000); B.legend(); B.set_title("Profits")
     rows = [("스타켈베르크 $(q_1^S,q_2^S)$", f"{_f(q1s)}, {_f(q2s)}"),
             ("가격 $P^S$", _f(Ps)), ("이윤 $(\\pi_1^S,\\pi_2^S)$", f"{_f(pis[0])}, {_f(pis[1])}"),
             ("쿠르노 이윤 $(\\pi_1^C,\\pi_2^C)$", f"{_f(pic[0])}, {_f(pic[1])}"),
@@ -206,11 +210,12 @@ def differentiated(alpha=100, beta=1.0, gamma=0.6, c=10):
 
     fig, ax = plt.subplots(1, 3, figsize=(11, 4.4))
     A = ax[0]
-    pg = np.linspace(0, pB * 1.8, 100)
+    pg = np.linspace(0, PAX, 100)
     A.plot((a + b * c) / (2 * b) + d / (2 * b) * pg, pg, color=C1, label="R1(p2)")
     A.plot(pg, (a + b * c) / (2 * b) + d / (2 * b) * pg, color=C2, label="R2(p1)")
     A.plot(pB, pB, "o", color="k", label="Bertrand-Nash")
     A.plot(p1s, p2s, "*", color=C3, ms=13, label="firm 1 moves first")
+    A.set_xlim(0, PAX); A.set_ylim(0, PAX)
     A.set_xlabel("p1"); A.set_ylabel("p2"); A.set_title("Prices: strategic complements")
     A.legend(fontsize=7)
     gs = np.linspace(0, .98, 50) * beta
@@ -225,11 +230,13 @@ def differentiated(alpha=100, beta=1.0, gamma=0.6, c=10):
     ax[1].plot(gs / beta, pbs, color=C1, label="Bertrand")
     ax[1].plot(gs / beta, pcs, color=C2, label="Cournot")
     ax[1].axvline(gamma / beta, color=GR, ls=":")
+    ax[1].set_xlim(0, 1); ax[1].set_ylim(0, PAX)
     ax[1].set_xlabel("substitutability γ/β"); ax[1].set_ylabel("price"); ax[1].legend()
     ax[1].set_title("Price: Bertrand < Cournot")
     ax[2].plot(gs / beta, ibs, color=C1, label="Bertrand")
     ax[2].plot(gs / beta, ics, color=C2, label="Cournot")
     ax[2].axvline(gamma / beta, color=GR, ls=":")
+    ax[2].set_xlim(0, 1); ax[2].set_ylim(0, 7000)
     ax[2].set_xlabel("substitutability γ/β"); ax[2].set_ylabel("profit per firm")
     ax[2].legend(); ax[2].set_title("Profit shrinks as goods get closer")
     rows = [("수요계수 $(a,b,d)$", f"{_f(a)}, {_f(b, 3)}, {_f(d, 3)}"),
@@ -241,8 +248,8 @@ def differentiated(alpha=100, beta=1.0, gamma=0.6, c=10):
 
 
 # ---------------------------------------------------------------- 진입
-def entry(a=100, b=1, c=10, e=40, nmax=15):
-    n = np.arange(1, int(nmax) + 1)
+def entry(a=100, b=1, c=10, e=40, nmax=40):
+    n = np.arange(1, 41)
     qn = (a - c) / (b * (n + 1))
     Pn = (a + n * c) / (n + 1)
     pin = (a - c) ** 2 / (b * (n + 1) ** 2)
@@ -251,17 +258,21 @@ def entry(a=100, b=1, c=10, e=40, nmax=15):
     W = b * Q ** 2 / 2 + n * (pin - e)
     ns = int(n[np.argmax(W)])
     fig, ax = plt.subplots(1, 3, figsize=(11, 4.4))
+    for A_ in ax: A_.set_xlim(0, 41)
     ax[0].plot(n, pin, "-o", ms=3, color=C1, label="π(n)")
     ax[0].axhline(e, color=C2, ls="--", label=f"entry cost e={_f(e, 0)}")
     ax[0].axvline(ne + .5, color=GR, ls=":")
+    ax[0].set_ylim(0, 1500)
     ax[0].set_xlabel("number of firms n"); ax[0].set_title(f"Free entry: n^e = {ne}")
     ax[0].legend()
     ax[1].plot(n, Pn, "-o", ms=3, color=C1, label="P(n)")
     ax[1].axhline(c, color=GR, ls=":", label="marginal cost")
+    ax[1].set_ylim(0, PAX)
     ax[1].set_xlabel("n"); ax[1].set_title("Price falls toward c"); ax[1].legend()
     ax[2].plot(n, W, "-o", ms=3, color=C3)
     ax[2].axvline(ns, color=C3, ls="--", label=f"social optimum n* = {ns}")
     ax[2].axvline(max(ne, 1), color=C2, ls="--", label=f"free entry = {ne}")
+    ax[2].set_ylim(-2000, 8000)
     ax[2].set_xlabel("n"); ax[2].set_title("Welfare = CS + profits − entry cost"); ax[2].legend()
     rows = [("자유진입 균형 기업 수 $n^e$", ne),
             ("사회적 최적 기업 수 $n^*$", ns),
@@ -277,17 +288,18 @@ def conduct(a=100, b=1, c=20, lam=0.5):
     eta = p / (b * q)
     L = (p - c) / p
     fig, ax = plt.subplots(1, 2, figsize=(10.5, 4.2))
-    g = np.linspace(0, a / b, 100)
+    g = np.linspace(0, QAX, 100)
     ax[0].plot(g, a - b * g, color=C1, label="demand P(Q)")
     ax[0].plot(g, a - b * (1 + lam) * g, color=C2, label=f"MR(λ={lam:.2f})")
     ax[0].axhline(c, color=GR, ls=":", label="MC")
     ax[0].plot(q, p, "o", color="k")
-    ax[0].set_ylim(0, a); ax[0].set_xlabel("Q"); ax[0].legend(); ax[0].set_title("Equilibrium p + λP′Q = c")
+    ax[0].set_xlim(0, QAX); ax[0].set_ylim(0, PAX); ax[0].set_xlabel("Q"); ax[0].legend(); ax[0].set_title("Equilibrium p + λP′Q = c")
     ls_ = np.linspace(0, 1, 50)
     ax[1].plot(ls_, [(a - b * Q(l) - c) / (a - b * Q(l)) for l in ls_], color=C1)
     ax[1].plot(lam, L, "o", color="k")
     for l, t in ((0, "competition"), (.5, "n=2 Cournot"), (1, "monopoly")):
         ax[1].annotate(t, (l, (a - b * Q(l) - c) / (a - b * Q(l))), fontsize=7)
+    ax[1].set_xlim(0, 1); ax[1].set_ylim(0, 1)
     ax[1].set_xlabel("conduct parameter λ"); ax[1].set_ylabel("Lerner index L")
     ax[1].set_title("L = λ/η")
     rows = [("시장 생산량 $Q$", _f(q)), ("가격 $P$", _f(p)),
@@ -307,7 +319,8 @@ def compare(a=100, b=1, c=10):
     W = cs + prof
     fig, ax = plt.subplots(1, 3, figsize=(11, 4.2))
     cols = [GR, C3, C1, C2]
-    for A, v, t in zip(ax, (P, prof, W), ("Price", "Industry profit", "Total welfare")):
+    for A, v, t, yl in zip(ax, (P, prof, W), ("Price", "Industry profit", "Total welfare"), (PAX, 8000, 15000)):
+        A.set_ylim(0, yl)
         A.bar(range(4), v, color=cols); A.set_xticks(range(4), names, rotation=18, fontsize=8)
         A.set_title(t)
         for i, x in enumerate(v):
