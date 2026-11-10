@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과점시장 모형 시뮬레이터</title>
+<meta name="description" content="쿠르노·베르트랑·스타켈베르크·제품 차별화·진입 모형을 슬라이더로 조절하며 파이썬 코드로 시각화하고 시뮬레이션하는 산업조직론 학습 도구">
+<meta property="og:title" content="과점시장 모형 시뮬레이터">
+<meta property="og:description" content="산업조직론 1장 과점시장 모형을 파이썬으로 직접 돌려 보며 공부하세요.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>과점시장 모형 시뮬레이터</h1>
+  <p>산업조직론 1장 · 슬라이더를 움직이면 브라우저 안의 파이썬이 균형을 다시 계산해 그래프를 그립니다.</p>
+</header>
+<nav id="tabs" aria-label="모형 선택"></nav>
+<main>
+  <section id="loading" role="status">파이썬 환경을 불러오는 중이에요… (처음 한 번, 약 10–20초)</section>
+  <section id="panel" hidden>
+    <div class="grid">
+      <aside>
+        <h2 id="title"></h2>
+        <div id="theory"></div>
+        <form id="controls"></form>
+        <button id="reset" type="button">기본값으로</button>
+      </aside>
+      <div class="result">
+        <img id="plot" alt="모형 시뮬레이션 그래프">
+        <p id="note"></p>
+        <table id="rows"></table>
+      </div>
+    </div>
+    <details id="codebox">
+      <summary>이 모형의 파이썬 코드 보기</summary>
+      <pre><code id="code"></code></pre>
+    </details>
+  </section>
+</main>
+<footer>수업 자료(IO Ch.01)의 식을 그대로 코드로 옮겼어요. 그래프의 영문 표기는 브라우저 파이썬에 한글 글꼴이 없어서예요.</footer>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
