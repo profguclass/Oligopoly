@@ -58,8 +58,8 @@ def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
     qmax = (a - min(c1, c2)) / b
     g = np.linspace(0, QAX, 200)
     A = ax[0]
-    A.plot(br1(g), g, color=C1, lw=3, label="R1 (firm 1 best response)")
-    A.plot(g, br2(g), color=C2, lw=3, label="R2 (firm 2 best response)")
+    A.plot(br1(g), g, color=C1, lw=5, label="R1 (firm 1 best response)")
+    A.plot(g, br2(g), color=C2, lw=5, label="R2 (firm 2 best response)")
     # 반응 경로(순차 조정)
     x, y = start1, start2
     path = [(x, y)]
@@ -166,8 +166,8 @@ def stackelberg(a=100, b=1, c1=10, c2=10):
     g = np.linspace(0.01, QAX, 600)
     fig, ax = plt.subplots(1, 2, figsize=(10.5, 4.4))
     A = ax[0]
-    A.plot(np.maximum((a - c1) / (2 * b) - g / 2, 0), g, color=C1, lw=3, label="R1")
-    A.plot(g, np.maximum((a - c2) / (2 * b) - g / 2, 0), color=C2, lw=3, label="R2 (follower)")
+    A.plot(np.maximum((a - c1) / (2 * b) - g / 2, 0), g, color=C1, lw=5, label="R1")
+    A.plot(g, np.maximum((a - c2) / (2 * b) - g / 2, 0), color=C2, lw=5, label="R2 (follower)")
     for k, ls in ((pic[0], "--"), (pis[0], "-")):
         y = (a - c1) / b - g - k / (b * g)
         A.plot(g[y >= 0], y[y >= 0], color=PU, ls=ls, lw=1.2,
@@ -212,8 +212,8 @@ def differentiated(alpha=100, beta=1.0, gamma=0.6, c=10):
     fig, ax = plt.subplots(1, 3, figsize=(11, 4.4))
     A = ax[0]
     pg = np.linspace(0, PAX, 100)
-    A.plot((a + b * c) / (2 * b) + d / (2 * b) * pg, pg, color=C1, lw=3, label="R1(p2)")
-    A.plot(pg, (a + b * c) / (2 * b) + d / (2 * b) * pg, color=C2, lw=3, label="R2(p1)")
+    A.plot((a + b * c) / (2 * b) + d / (2 * b) * pg, pg, color=C1, lw=5, label="R1(p2)")
+    A.plot(pg, (a + b * c) / (2 * b) + d / (2 * b) * pg, color=C2, lw=5, label="R2(p1)")
     A.plot(pB, pB, "o", color="k", label="Bertrand-Nash")
     A.plot(p1s, p2s, "*", color=C3, ms=13, label="firm 1 moves first")
     A.set_xlim(0, PAX); A.set_ylim(0, PAX)
@@ -342,8 +342,8 @@ def spne(a=100, b=1, c=10):
     fig, ax = plt.subplots(1, 2, figsize=(11, 4.6), gridspec_kw={"width_ratios": [1.15, 1]})
     A = ax[0]
     r = np.where(g <= k, k / 2 - g / 2, np.nan)
-    A.plot(r, g, color=C1, lw=3, label="R1 (firm 1)")
-    A.plot(g, r, color=C2, lw=3, label="R2 (firm 2)")
+    A.plot(r, g, color=C1, lw=5, label="R1 (firm 1)")
+    A.plot(g, r, color=C2, lw=5, label="R2 (firm 2)")
     for n, (x, y) in pts.items():
         A.plot(x, y, "o", color="k", ms=7)
         A.annotate(n.replace("S1", "$S_1$").replace("S2", "$S_2$"), (x, y), xytext=(6, 6),
@@ -458,8 +458,8 @@ def isoprofit(a=100, b=1, c1=10, c2=10, **_):
             i = int(np.argmax(y)); A.plot(g[i], y[i], ".", color=col, ms=5)
             A.annotate(f"{k:,.0f}", (g[i], y[i]), xytext=(0, 4), textcoords="offset points",
                        fontsize=7, ha="center", color=col)
-    A.plot(np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan), g, "--", color=C1, lw=3, label="R1 = peaks of iso-profit curves")
-    A.plot(g, np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan), color=C2, lw=3, label="R2 (follower)")
+    A.plot(np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan), g, "--", color=C1, lw=5, label="R1 = peaks of iso-profit curves")
+    A.plot(g, np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan), color=C2, lw=5, label="R2 (follower)")
     A.plot(q1c, q2c, "o", color="k", label="Cournot")
     A.plot(q1s, q2s, "*", color=C3, ms=14, label="Stackelberg (tangency)")
     A.set_xlim(0, QZ); A.set_ylim(0, QZ)
@@ -503,11 +503,11 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     lens = (pi1(X, Y) > k1c) & (pi2(X, Y) > k2c) & (X + Y < a / b)
     A.contourf(X, Y, lens.astype(float), levels=[.5, 1.5], colors=[C3], alpha=.3)
     r = np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan)
-    A.plot(r, g, color=C1, lw=3)
+    A.plot(r, g, color=C1, lw=5)
     yl = QZ * .6
     A.text(max((a - c1) / (2 * b) - yl / 2, 0) + 2, yl, "$R_1$", color=C1, fontsize=12)
     r = np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan)
-    A.plot(g, r, color=C2, lw=3)
+    A.plot(g, r, color=C2, lw=5)
     xl = QZ * .75
     A.text(xl, max((a - c2) / (2 * b) - xl / 2, 0) + 3, "$R_2$", color=C2, fontsize=12)
     for k, lw, ls in ((k1c, 2.4, "-"), (k1m, 1.6, "--")):
