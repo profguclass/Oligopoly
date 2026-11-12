@@ -503,10 +503,12 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     A.contourf(X, Y, lens.astype(float), levels=[.5, 1.5], colors=[C3], alpha=.3)
     r = np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan)
     A.plot(r, g, color=C1, lw=1.4)
-    A.text(r[np.nanargmin(np.abs(g - 1.18 * QZ / 2))] + 1, QZ * .59, "$R_1$", color=C1, fontsize=12)
+    yl = QZ * .6
+    A.text(max((a - c1) / (2 * b) - yl / 2, 0) + 2, yl, "$R_1$", color=C1, fontsize=12)
     r = np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan)
     A.plot(g, r, color=C2, lw=1.4)
-    A.text(QZ * .75, r[np.argmin(np.abs(g - QZ * .75))] + 2, "$R_2$", color=C2, fontsize=12)
+    xl = QZ * .75
+    A.text(xl, max((a - c2) / (2 * b) - xl / 2, 0) + 3, "$R_2$", color=C2, fontsize=12)
     for k, lw, ls in ((.4 * k1c, 1, "-"), (k1c, 2.4, "-"), (k1m, 1.2, "--")):
         x, y = c1_curve(k); m = y >= 0
         A.plot(x[m], y[m], color=C1, lw=lw, ls=ls)
@@ -521,7 +523,7 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     A.plot(mx, my, "*", color=C3, ms=14); A.annotate("M", (mx, my), xytext=(-14, -14), textcoords="offset points", weight="bold")
     A.plot((a - c1) / (2 * b), 0, "s", color=C1, ms=5); A.plot(0, (a - c2) / (2 * b), "s", color=C2, ms=5)
     A.set_xlim(0, QZ); A.set_ylim(0, QZ); A.set_xlabel("q1"); A.set_ylabel("q2")
-    A.set_title("Cournot: iso-profit curves (solid thick = through C, dashed = at M)", fontsize=9)
+    A.set_title("Cournot: iso-profit curves of both firms\n(thick = through C, dashed = through M)", fontsize=10)
     B = ax[1]
     qg = np.linspace(0, QZ, 400)
     for q2, col in ((0, "#93c5fd"), (q2c * .5, "#60a5fa"), (q2c, C1), (q2c * 1.8, "#1e3a8a")):
@@ -530,7 +532,7 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
         qs = max((a - c1) / (2 * b) - q2 / 2, 0)
         B.plot(qs, (a - b * (qs + q2) - c1) * qs, "o", color=col)
     B.set_xlim(0, QZ); B.set_ylim(0, 2500); B.set_xlabel("q1"); B.set_ylabel("$\\pi_1$")
-    B.set_title("Why curves peak on $R_1$: best $q_1$ for each $q_2$", fontsize=9); B.legend(fontsize=8)
+    B.set_title("Why curves peak on $R_1$:\nbest $q_1$ for each $q_2$", fontsize=10); B.legend(fontsize=8)
     in_lens = bool(k1m > k1c and k2m > k2c)
     rows = [("쿠르노 점 $C$의 이윤 $(\\pi_1^C,\\pi_2^C)$", f"{_f(k1c)}, {_f(k2c)}"),
             ("$C$에서 기업 1 곡선의 접선", "수평 (꼭짓점)"),
