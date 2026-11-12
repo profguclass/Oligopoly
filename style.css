@@ -45,3 +45,4 @@ footer{max-width:1280px;margin:auto;padding:0 20px 32px;color:var(--mut);font-si
 #steps h3{margin:6px 0 2px;font-size:.98rem}
 @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#steps li{animation:none}}
+#plot2wrap h3{margin:14px 0 4px;font-size:1rem}#plot2{width:100%;height:auto;display:block}

@@ -432,3 +432,51 @@ def timing_game(a=100, b=1, c=10, n_traj=16, seed=3):
             ("순수균형 보수 비교 (선도자 / 추종자)", f"{A[0, 1] / u:.4f} / {Bm[0, 1] / u:.4f}"),
             ("시뮬레이션 결과 (1이 선도 / 2가 선도 / 기타)", f"{ends['LF']} / {ends['FL']} / {ends['other']}")]
     return _out(fig, rows, "누가 선도자가 될지 정해져 있지 않으면 둘 다 선도(0,0)나 둘 다 추종(1/9,1/9)보다 한쪽만 선도하는 두 균형이 나옵니다. 어느 쪽이 될지는 게임만으로 정해지지 않아 조정 문제가 남습니다.")
+
+
+# ------------------------------------------------ 스타켈베르크: 등이윤곡선
+def isoprofit(a=100, b=1, c1=10, c2=10):
+    QZ = 120  # 고정 축
+    q1c, q2c = cournot_eq(a, b, c1, c2)
+    q1s = max((a - 2 * c1 + c2) / (2 * b), 0)
+    q2s = max((a - c2) / (2 * b) - q1s / 2, 0)
+    pi_s = (a - b * (q1s + q2s) - c1) * q1s
+    pi_c = (a - b * (q1c + q2c) - c1) * q1c
+    pi_m = (a - c1) ** 2 / (4 * b)
+    g = np.linspace(0.05, QZ, 800)
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.6))
+    A = ax[0]
+    levels = sorted(set([f * pi_m for f in (.1, .25, .45, .65, .85)] + [pi_c, pi_s]))
+    for k in levels:
+        y = (a - c1) / b - g - k / (b * g)
+        m = y >= 0
+        special = abs(k - pi_s) < 1e-9 or abs(k - pi_c) < 1e-9
+        col = C3 if abs(k - pi_s) < 1e-9 else "k" if abs(k - pi_c) < 1e-9 else C1
+        A.plot(g[m], y[m], color=col, lw=2.2 if special else 1, alpha=1 if special else .6)
+        if m.any():
+            i = int(np.argmax(y)); A.plot(g[i], y[i], ".", color=col, ms=5)
+            A.annotate(f"{k:,.0f}", (g[i], y[i]), xytext=(0, 4), textcoords="offset points",
+                       fontsize=7, ha="center", color=col)
+    A.plot(np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan), g, "--", color=C1, lw=1, label="R1 = peaks of iso-profit curves")
+    A.plot(g, np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan), color=C2, label="R2 (follower)")
+    A.plot(q1c, q2c, "o", color="k", label="Cournot")
+    A.plot(q1s, q2s, "*", color=C3, ms=14, label="Stackelberg (tangency)")
+    A.set_xlim(0, QZ); A.set_ylim(0, QZ)
+    A.set_xlabel("q1 (leader)"); A.set_ylabel("q2")
+    A.set_title("Iso-profit curves of firm 1 (labels = profit)"); A.legend(fontsize=7)
+    B = ax[1]
+    q1g = np.linspace(0, QZ, 400)
+    q2r = np.maximum((a - c2) / (2 * b) - q1g / 2, 0)
+    lead = (a - b * (q1g + q2r) - c1) * q1g
+    B.plot(q1g, lead, color=C1)
+    B.axhline(pi_c, color="k", ls=":", lw=1, label=f"Cournot profit {pi_c:,.0f}")
+    B.plot(q1s, pi_s, "*", color=C3, ms=14, label=f"leader's optimum q1 = {q1s:,.1f}")
+    B.set_xlim(0, QZ); B.set_ylim(-1000, 4000)
+    B.set_xlabel("q1"); B.set_ylabel("π1 along follower's R2")
+    B.set_title("Leader's problem: π1(q1, R2(q1))"); B.legend(fontsize=8)
+    rows = [("꼭짓점 위치 (반응함수 $R_1$ 위)", "$q_1=\\sqrt{k/b}$"),
+            ("스타켈베르크 접점 $(q_1^S,q_2^S)$", f"{_f(q1s)}, {_f(q2s)}"),
+            ("접점의 등이윤 수준 $\\pi_1^S$", _f(pi_s)),
+            ("쿠르노 점의 등이윤 수준 $\\pi_1^C$", _f(pi_c)),
+            ("접점에서 $R_2$의 기울기", "$-1/2$")]
+    return _out(fig, rows, "등이윤곡선은 아래쪽일수록 기업 1의 이윤이 큽니다. 선도자는 추종자의 반응함수 R2와 접하는 가장 아래쪽 곡선(초록)을 고릅니다. 쿠르노 점은 R2 위에서 더 위쪽 곡선(검정)이라 이윤이 낮습니다.")

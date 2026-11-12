@@ -18,7 +18,7 @@ const MODELS = [
       $$p_1^*=p_2^*=c,\\qquad \\pi_1^*=\\pi_2^*=0$$
       <p>(베르트랑 역설). 비용이 다르면($c_1<c_2$) 기업 1이 상대 비용 바로 아래의 가격으로 시장 전체를 공급한다.</p>`,
     params:[...COMMON,["c1","기업 1 한계비용 $c_1$",0,50,1,10],["c2","기업 2 한계비용 $c_2$",0,50,1,10],["p1_0","시작 가격 $p_1$",0,150,1,80],["p2_0","시작 가격 $p_2$",0,150,1,75],["eps","인하 폭 $\\varepsilon$",.5,10,.5,2],["rounds","라운드 수",2,150,2,80]] },
-  { id:"stackelberg", fn:"stackelberg", name:"스타켈베르크", title:"스타켈베르크 모형: 선도자 이점",
+  { id:"stackelberg", fn:"stackelberg", extra:"isoprofit", name:"스타켈베르크", title:"스타켈베르크 모형: 선도자 이점",
     theory:`<p>기업 1(선도자)이 먼저 $q_1$을 정하고 기업 2(추종자)가 관찰 후 선택한다. 역진귀납법:</p>
       <p><b>2단계</b> 추종자의 최적화</p>
       $$\\max_{q_2}\\,[a-b(q_1+q_2)-c_2]\\,q_2\\;\\Rightarrow\\; q_2^*(q_1)=\\frac{a-c_2}{2b}-\\frac{q_1}{2}$$
@@ -108,7 +108,14 @@ stackelberg:[
  ["선도자: 반응을 이윤에 대입","$$\\pi_1=\\left[a-bq_1-b\\left(\\frac{a-c}{2b}-\\frac{q_1}{2}\\right)-c\\right]q_1=\\frac{(a-c)\\,q_1}{2}-\\frac{b\\,q_1^2}{2}$$"],
  ["선도자의 1계 조건","$$\\frac{d\\pi_1}{dq_1}=\\frac{a-c}{2}-b\\,q_1=0\\;\\Rightarrow\\;q_1^S=\\frac{a-c}{2b}$$"],
  ["균형 완성","$$q_2^S=\\frac{a-c}{4b},\\quad Q^S=\\frac{3(a-c)}{4b},\\quad P^S=\\frac{a+3c}{4}$$$$\\pi_1^S=\\frac{(a-c)^2}{8b},\\quad \\pi_2^S=\\frac{(a-c)^2}{16b}$$"],
- ["비용이 다른 경우","$$q_1^S=\\frac{a-2c_1+c_2}{2b},\\qquad q_2^S=\\frac{a+2c_1-3c_2}{4b}$$<p>$c_1=c_2$이면 위 대칭 결과로 돌아간다.</p>"]],
+ ["비용이 다른 경우","$$q_1^S=\\frac{a-2c_1+c_2}{2b},\\qquad q_2^S=\\frac{a+2c_1-3c_2}{4b}$$<p>$c_1=c_2$이면 위 대칭 결과로 돌아간다.</p>"],
+ ["등이윤곡선의 정의","<p>기업 1의 이윤이 같은 값 $k$인 $(q_1,q_2)$의 집합이다.</p>$$\\pi_1(q_1,q_2)=(a-c_1-bq_1-bq_2)\\,q_1=k$$"],
+ ["$q_2$에 대해 풀기","$$a-c_1-bq_1-bq_2=\\frac{k}{q_1}\\;\\Rightarrow\\;q_2=\\frac{a-c_1}{b}-q_1-\\frac{k}{b\\,q_1}$$<p>$k$가 클수록 곡선이 아래로 내려간다.</p>"],
+ ["기울기","$$\\frac{dq_2}{dq_1}=-\\frac{\\partial\\pi_1/\\partial q_1}{\\partial\\pi_1/\\partial q_2}=\\frac{a-c_1-2bq_1-bq_2}{b\\,q_1}$$"],
+ ["꼭짓점은 반응함수 위","<p>기울기가 0인 점에서는 $\\partial\\pi_1/\\partial q_1=0$이다. 이는 기업 1의 1계 조건과 같으므로</p>$$a-c_1-2bq_1-bq_2=0\\;\\Longleftrightarrow\\;q_1=R_1(q_2)$$<p>모든 등이윤곡선의 꼭짓점이 $R_1$ 위에 놓인다(쿠르노 균형은 이 위의 한 점).</p>"],
+ ["이윤의 방향","$$\\frac{\\partial\\pi_1}{\\partial q_2}=-b\\,q_1<0$$<p>$q_2$가 작을수록 기업 1의 이윤이 크므로 아래쪽 곡선일수록 이윤이 높다.</p>"],
+ ["선도자의 선택: 접점 조건","<p>추종자는 $R_2$ 위에서만 반응하므로, 선도자는 $R_2$와 접하는 가장 낮은 등이윤곡선을 고른다. 곡선의 기울기 = $R_2$의 기울기 $-\\tfrac12$:</p>$$\\frac{a-c-2bq_1-bq_2}{b\\,q_1}=-\\frac12,\\qquad q_2=\\frac{a-c}{2b}-\\frac{q_1}{2}$$"],
+ ["접점 풀이","$$\\frac{a-c}{2}-\\frac32\\,b\\,q_1=-\\frac12\\,b\\,q_1\\;\\Rightarrow\\;q_1^S=\\frac{a-c}{2b}$$<p>앞의 역진귀납법 결과와 일치한다. 이 점의 등이윤곡선은 쿠르노 점을 지나는 곡선보다 아래에 있어 선도자가 더 높은 이윤을 얻는다.</p>"]],
 differentiated:[
  ["역수요","$$P_1=\\alpha-\\beta q_1-\\gamma q_2,\\qquad P_2=\\alpha-\\beta q_2-\\gamma q_1\\qquad(\\beta>\\gamma>0)$$"],
  ["수요함수 (역함수)","$$q_1=\\underbrace{\\frac{\\alpha}{\\beta+\\gamma}}_{a}-\\underbrace{\\frac{\\beta}{\\beta^2-\\gamma^2}}_{b}\\,p_1+\\underbrace{\\frac{\\gamma}{\\beta^2-\\gamma^2}}_{d}\\,p_2$$"],
@@ -172,10 +179,8 @@ function selectModel(m) {
     f.appendChild(d);
   });
   typeset($("theory"), $("controls"));
-  const re = new RegExp(`^def ${m.fn}\\(`, "m");
-  const i = src.search(re);
-  let j = src.slice(i + 1).search(/^(def |# -{5,})/m);
-  $("code").textContent = src.slice(i, j < 0 ? undefined : i + 1 + j).trim();
+  const cut = fn => { const a = src.search(new RegExp(`^def ${fn}\\(`, "m")); const e = src.slice(a + 1).search(/^(def |# -{5,})/m); return src.slice(a, e < 0 ? undefined : a + 1 + e).trim(); };
+  $("code").textContent = cut(m.fn) + (m.extra ? "\n\n\n" + cut(m.extra) : "");
   shown = 0; renderSteps();
   run();
 }
@@ -184,8 +189,10 @@ async function run() {
   document.body.classList.add("busy");
   py.globals.set("_args", py.toPy(vals));
   const out = JSON.parse(await py.runPythonAsync(`import models\nmodels.${cur.fn}(**_args)`));
+  if (cur.extra) out.img2 = JSON.parse(await py.runPythonAsync(`models.${cur.extra}(**_args)`)).img;
   $("plot").src = "data:image/png;base64," + out.img;
   $("note").textContent = out.note;
+  $("plot2wrap").hidden = !out.img2; if (out.img2) $("plot2").src = "data:image/png;base64," + out.img2;
   $("rows").innerHTML = out.rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
   typeset($("note"), $("rows"));
   document.body.classList.remove("busy");
