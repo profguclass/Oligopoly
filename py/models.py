@@ -328,3 +328,107 @@ def compare(a=100, b=1, c=10):
     rows = [(n_, f"Q={_f(q)}  P={_f(p)}  이윤={_f(pr)}  후생={_f(w)}")
             for n_, q, p, pr, w in zip(names, Q, P, prof, W)]
     return _out(fig, rows, "생산량: 완전경쟁 > 스타켈베르크 > 쿠르노 > 독점. 가격은 반대 순서입니다 (동질재, 대칭 비용).")
+
+
+# ------------------------------------------- 그림 6-1: 부분게임완전균형
+def spne(a=100, b=1, c=10):
+    k = (a - c) / b
+    pts = {"M": (k / 4, k / 4), "C": (k / 3, k / 3), "S1": (k / 2, k / 4),
+           "S2": (k / 4, k / 2), "W": (k / 2, k / 2)}
+    prof = {n: ((a - b * (x + y) - c) * x, (a - b * (x + y) - c) * y) for n, (x, y) in pts.items()}
+    L = 110
+    g = np.linspace(0, L, 200)
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.6), gridspec_kw={"width_ratios": [1.15, 1]})
+    A = ax[0]
+    r = np.where(g <= k, k / 2 - g / 2, np.nan)
+    A.plot(r, g, color=C1, label="R1 (firm 1)")
+    A.plot(g, r, color=C2, label="R2 (firm 2)")
+    for n, (x, y) in pts.items():
+        A.plot(x, y, "o", color="k", ms=7)
+        A.annotate(n.replace("S1", "$S_1$").replace("S2", "$S_2$"), (x, y), xytext=(6, 6),
+                   textcoords="offset points", fontsize=11, weight="bold")
+        A.plot([x, x], [0, y], ":", color=GR, lw=1); A.plot([0, x], [y, y], ":", color=GR, lw=1)
+    A.set_xlim(0, L); A.set_ylim(0, L)
+    A.set_xlabel("q1 (firm 1 output)"); A.set_ylabel("q2 (firm 2 output)")
+    A.set_title("Subgame-perfect outcomes"); A.legend(fontsize=8, loc="upper right")
+    B = ax[1]
+    names = list(pts)
+    x = np.arange(len(names)); w = .38
+    B.bar(x - w / 2, [prof[n][0] for n in names], w, color=C1, label="firm 1")
+    B.bar(x + w / 2, [prof[n][1] for n in names], w, color=C2, label="firm 2")
+    B.set_xticks(x, [n.replace("S1", "S1").replace("S2", "S2") for n in names])
+    B.set_ylim(0, 4000); B.legend(fontsize=8); B.set_title("Profits at each point")
+    desc = {"M": "담합 (각자 독점 생산량의 절반)", "C": "쿠르노–내시 (동시 선택)",
+            "S1": "기업 1 선도, 기업 2 추종", "S2": "기업 2 선도, 기업 1 추종",
+            "W": "둘 다 선도자로 행동 (스타켈베르크 전쟁)"}
+    rows = [(f"{n} · {desc[n]}",
+             f"q=({_f(pts[n][0])}, {_f(pts[n][1])})  π=({_f(prof[n][0], 1)}, {_f(prof[n][1], 1)})") for n in names]
+    return _out(fig, rows, "S₁은 기업 1이 선도자 수량 (a−c)/2b를 정할 때 기업 2의 반응함수 위의 점, S₂는 그 반대입니다. 둘 다 선도자 수량을 고르면 W에서 가격이 한계비용까지 떨어집니다.".replace("S₁", "$S_1$").replace("S₂", "$S_2$").replace("(a−c)/2b", "$(a-c)/2b$"))
+
+
+# ------------------------------------ 그림 6-2: 선도자·추종자 불명확
+def timing_game(a=100, b=1, c=10, n_traj=16, seed=3):
+    u = (a - c) ** 2 / b
+    # A[i][j]: 기업 1 보수, i=0 선도/1 추종; j: 기업 2
+    A = np.array([[0, u / 8], [u / 16, u / 9]])
+    Bm = np.array([[0, u / 16], [u / 8, u / 9]])
+    lab = ["Lead", "Follow"]
+    ne = []
+    for i in range(2):
+        for j in range(2):
+            if A[i, j] >= A[1 - i, j] and Bm[i, j] >= Bm[i, 1 - j]:
+                ne.append((i, j))
+    q = (A[1, 1] - A[0, 1]) / (A[0, 0] - A[0, 1] - A[1, 0] + A[1, 1])   # P(기업 2 선도)
+    p = (Bm[1, 1] - Bm[1, 0]) / (Bm[0, 0] - Bm[1, 0] - Bm[0, 1] + Bm[1, 1])  # P(기업 1 선도)
+    ev1 = q * A[0, 0] + (1 - q) * A[0, 1]
+    ev2 = p * Bm[0, 0] + (1 - p) * Bm[1, 0]
+
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.6))
+    M = ax[0]; M.set_xlim(0, 3); M.set_ylim(-.6, 3); M.axis("off"); M.grid(False)
+    M.set_title("Payoffs: (firm 1, firm 2)", fontsize=10)
+    for j in range(2):
+        M.text(1.5 + j, 2.75, f"Firm 2: {lab[j]}", ha="center", weight="bold", color=C2)
+    for i in range(2):
+        M.text(.45, 1.5 - i, f"Firm 1:\n{lab[i]}", ha="center", va="center", weight="bold", color=C1)
+        for j in range(2):
+            isne = (i, j) in ne
+            M.add_patch(plt.Rectangle((1 + j, 1 - i + .0), 1, 1, fc="#dbeafe" if isne else "#f3f4f6",
+                                      ec="k", lw=2 if isne else .8))
+            M.text(1.5 + j, 1.5 - i, f"{A[i, j] / u:.4f}\n,\n{Bm[i, j] / u:.4f}".replace("\n,\n", ",  "),
+                   ha="center", va="center", fontsize=9)
+            M.text(1.5 + j, 1.12 - i, ["0,0", "1/8, 1/16", "1/16, 1/8", "1/9, 1/9"][2 * i + j],
+                   ha="center", va="center", fontsize=8, color=GR)
+    M.text(1.5, -.3, f"unit = (a−c)²/b = {u:,.0f};  blue = pure Nash equilibrium", ha="center", fontsize=8)
+
+    P = ax[1]
+    P.set_xlim(0, 1); P.set_ylim(0, 1)
+    P.set_xlabel("x = P(firm 1 leads)"); P.set_ylabel("y = P(firm 2 leads)")
+    P.set_title("Replicator dynamics (simulation)")
+    rng = np.random.default_rng(int(seed))
+    ends = {"LF": 0, "FL": 0, "other": 0}
+    for _ in range(int(n_traj)):
+        x, y = rng.uniform(.02, .98, 2)
+        tx, ty = [x], [y]
+        for _ in range(600):
+            u1 = (y * A[0, 0] + (1 - y) * A[0, 1] - y * A[1, 0] - (1 - y) * A[1, 1]) / u
+            u2 = (x * Bm[0, 0] + (1 - x) * Bm[1, 0] - x * Bm[0, 1] - (1 - x) * Bm[1, 1]) / u
+            x = min(max(x + 4 * x * (1 - x) * u1, 0), 1)
+            y = min(max(y + 4 * y * (1 - y) * u2, 0), 1)
+            tx.append(x); ty.append(y)
+        k = "LF" if x > .9 and y < .1 else "FL" if x < .1 and y > .9 else "other"
+        ends[k] += 1
+        col = C1 if k == "LF" else C2 if k == "FL" else GR
+        P.plot(tx, ty, color=col, lw=1, alpha=.7); P.plot(tx[0], ty[0], ".", color=col)
+    P.plot([1, 0], [0, 1], "o", color="k", ms=8)
+    P.annotate("(Lead, Follow)", (1, 0), xytext=(-70, 8), textcoords="offset points", fontsize=8)
+    P.annotate("(Follow, Lead)", (0, 1), xytext=(6, -14), textcoords="offset points", fontsize=8)
+    P.plot(p, q, "s", color=C3, ms=8, label=f"mixed NE ({p:.3f}, {q:.3f})")
+    P.legend(fontsize=8, loc="center right")
+
+    nm = {(0, 1): "(선도, 추종)", (1, 0): "(추종, 선도)", (0, 0): "(선도, 선도)", (1, 1): "(추종, 추종)"}
+    rows = [("순수전략 내시균형", ", ".join(nm[t] for t in ne) or "없음"),
+            ("혼합전략 균형: 선도 확률 $(x^*, y^*)$", f"({p:.4f}, {q:.4f})"),
+            ("혼합전략 균형의 기대보수 (단위 $(a-c)^2/b$)", f"{ev1 / u:.4f}, {ev2 / u:.4f}"),
+            ("순수균형 보수 비교 (선도자 / 추종자)", f"{A[0, 1] / u:.4f} / {Bm[0, 1] / u:.4f}"),
+            ("시뮬레이션 결과 (1이 선도 / 2가 선도 / 기타)", f"{ends['LF']} / {ends['FL']} / {ends['other']}")]
+    return _out(fig, rows, "누가 선도자가 될지 정해져 있지 않으면 둘 다 선도(0,0)나 둘 다 추종(1/9,1/9)보다 한쪽만 선도하는 두 균형이 나옵니다. 어느 쪽이 될지는 게임만으로 정해지지 않아 조정 문제가 남습니다.")
