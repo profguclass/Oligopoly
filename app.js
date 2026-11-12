@@ -1,6 +1,6 @@
 const COMMON = [["a","수요 절편 $a$",50,150,1,100],["b","수요 기울기 $b$",.75,2,.05,1]];
 const MODELS = [
-  { id:"cournot", fn:"cournot", name:"쿠르노", title:"쿠르노 모형: 수량 경쟁과 담합의 붕괴",
+  { id:"cournot", fn:"cournot", extra:"isoprofit_cournot", name:"쿠르노", title:"쿠르노 모형: 수량 경쟁과 담합의 붕괴",
     theory:`<p>두 기업이 동시에 생산량을 선택한다. 역수요와 이윤은</p>
       $$P=a-b(q_1+q_2),\\qquad \\pi_1=\\bigl[a-b(q_1+q_2)-c_1\\bigr]q_1$$
       <p>1계 조건 $\\partial\\pi_1/\\partial q_1=0$에서 반응함수를 얻는다(전략적 대체재).</p>
@@ -9,6 +9,9 @@ const MODELS = [
       $$q^*=\\frac{a-c}{3b},\\quad P^*=\\frac{a+2c}{3},\\quad \\pi^*=\\frac{(a-c)^2}{9b}$$
       <p>담합(독점) 생산량과 이윤:</p>
       $$Q^m=\\frac{a-c}{2b},\\quad \\pi_i^m=\\frac{(a-c)^2}{8b}>\\pi^*$$
+      <p>등이윤곡선: 기업 1의 이윤이 같은 값 $k_1$인 점의 집합과 기업 2의 것은</p>
+      $$\\pi_1=(a-c_1-bq_1-bq_2)\\,q_1=k_1\\;\\Rightarrow\\;q_2=\\frac{a-c_1}{b}-q_1-\\frac{k_1}{b\\,q_1}$$
+      $$\\pi_2=(a-c_2-bq_1-bq_2)\\,q_2=k_2\\;\\Rightarrow\\;q_1=\\frac{a-c_2}{b}-q_2-\\frac{k_2}{b\\,q_2}$$
       <p>담합점에서의 한계이윤 $\\left.\\dfrac{\\partial\\pi_1}{\\partial q_1}\\right|_{q^m}=b\\,q_2^m>0$이므로 이탈 유인이 있다. 회색 선은 번갈아 최적 반응하며 균형에 수렴하는 경로다.</p>`,
     params:[...COMMON,["c1","기업 1 한계비용 $c_1$",0,50,1,10],["c2","기업 2 한계비용 $c_2$",0,50,1,10],["start1","시작점 $q_1$",0,200,1,5],["start2","시작점 $q_2$",0,200,1,60],["rounds","조정 횟수",1,20,1,8]] },
   { id:"bertrand", fn:"bertrand", name:"베르트랑", title:"베르트랑 모형: 가격 경쟁과 역설",
@@ -27,7 +30,9 @@ const MODELS = [
       <p>대칭 비용일 때:</p>
       $$q_1^S=\\frac{a-c}{2b},\\; q_2^S=\\frac{a-c}{4b},\\; P^S=\\frac{a+3c}{4}$$
       $$\\pi_1^S=\\frac{(a-c)^2}{8b},\\quad \\pi_2^S=\\frac{(a-c)^2}{16b}$$
-      <p>파란 등이윤곡선이 추종자 반응함수에 접하는 점이 균형이다.</p>`,
+      <p>기업 1의 등이윤곡선(이윤 $k$)은</p>
+      $$\\pi_1(q_1,q_2)=(a-c_1-bq_1-bq_2)\\,q_1=k\\;\\Longleftrightarrow\\;q_2=\\frac{a-c_1}{b}-q_1-\\frac{k}{b\\,q_1}$$
+      <p>꼭짓점은 $R_1$ 위에 있고 아래쪽 곡선일수록 이윤이 크다. 이 곡선이 추종자 반응함수에 접하는 점이 균형이다.</p>`,
     params:[...COMMON,["c1","선도자 한계비용 $c_1$",0,50,1,10],["c2","추종자 한계비용 $c_2$",0,50,1,10]] },
   { id:"spne", fn:"spne", name:"부분게임완전균형", title:"그림 6-1: 생산량결정 복점모형의 부분게임완전균형",
     theory:`<p>$k=(a-c)/b$로 두면 반응함수는 $q_i=\\dfrac{k}{2}-\\dfrac{q_j}{2}$이다. 그림의 다섯 점:</p>
@@ -95,7 +100,11 @@ cournot:[
  ["대입하여 정리","$$q_1=\\frac{a-c}{2b}-\\frac12\\left(\\frac{a-c}{2b}-\\frac{q_1}{2}\\right)=\\frac{a-c}{4b}+\\frac{q_1}{4}\\;\\Rightarrow\\;\\frac34\\,q_1=\\frac{a-c}{4b}$$"],
  ["균형 확정","$$q_1^*=q_2^*=\\frac{a-c}{3b},\\quad Q^*=\\frac{2(a-c)}{3b},\\quad P^*=\\frac{a+2c}{3},\\quad \\pi^*=\\frac{(a-c)^2}{9b}$$"],
  ["담합: 합동이윤 극대화","$$\\max\\;\\Pi=[a-bQ-c]\\,Q\\;\\Rightarrow\\;Q^m=\\frac{a-c}{2b},\\quad q_i^m=\\frac{a-c}{4b},\\quad \\pi_i^m=\\frac{(a-c)^2}{8b}>\\frac{(a-c)^2}{9b}$$"],
- ["담합이 무너지는 이유","<p>담합 1계 조건 $\\partial\\pi_1/\\partial q_1=-\\partial\\pi_2/\\partial q_1$ 이고 $\\partial\\pi_2/\\partial q_1=-b\\,q_2<0$ 이므로</p>$$\\left.\\frac{\\partial\\pi_1}{\\partial q_1}\\right|_{q^m}=b\\,q_2^m>0$$<p>기업 1은 약속을 어기고 생산량을 늘릴 유인이 있다. 기업 2도 마찬가지이므로 담합은 균형이 아니다.</p>"]],
+ ["담합이 무너지는 이유","<p>담합 1계 조건 $\\partial\\pi_1/\\partial q_1=-\\partial\\pi_2/\\partial q_1$ 이고 $\\partial\\pi_2/\\partial q_1=-b\\,q_2<0$ 이므로</p>$$\\left.\\frac{\\partial\\pi_1}{\\partial q_1}\\right|_{q^m}=b\\,q_2^m>0$$<p>기업 1은 약속을 어기고 생산량을 늘릴 유인이 있다. 기업 2도 마찬가지이므로 담합은 균형이 아니다.</p>"],
+ ["등이윤곡선: 기업 1","<p>이윤이 $k_1$로 같은 점의 집합이다.</p>$$\\pi_1=(a-c-bq_1-bq_2)\\,q_1=k_1\\;\\Rightarrow\\;q_2=\\frac{a-c}{b}-q_1-\\frac{k_1}{b\\,q_1}$$"],
+ ["등이윤곡선: 기업 2","$$\\pi_2=(a-c-bq_1-bq_2)\\,q_2=k_2\\;\\Rightarrow\\;q_1=\\frac{a-c}{b}-q_2-\\frac{k_2}{b\\,q_2}$$"],
+ ["꼭짓점은 반응곡선 위","$$\\frac{\\partial\\pi_1}{\\partial q_1}=0\\;\\Leftrightarrow\\;q_1=R_1(q_2),\\qquad \\frac{\\partial\\pi_2}{\\partial q_2}=0\\;\\Leftrightarrow\\;q_2=R_2(q_1)$$<p>기업 1의 곡선은 $R_1$ 위에서 수평 접선, 기업 2의 곡선은 $R_2$ 위에서 수직 접선을 갖는다. 쿠르노 점 $C$는 두 반응곡선의 교점이므로 두 곡선이 직각으로 만난다.</p>"],
+ ["렌즈 영역","<p>$C$를 지나는 두 등이윤곡선 사이의 영역은 $\\pi_1>\\pi_1^C$이고 $\\pi_2>\\pi_2^C$인 점의 집합이다.</p>$$\\pi_i^M=\\frac{(a-c)^2}{8b}>\\pi_i^C=\\frac{(a-c)^2}{9b}$$<p>담합점 $M$은 렌즈 안에 있어 두 기업 모두 이득이지만, 반응곡선 위의 점이 아니므로 균형이 될 수 없다.</p>"]],
 bertrand:[
  ["설정","<p>동질재, 두 기업이 가격을 동시에 설정하고 소비자는 더 낮은 가격의 기업에서만 산다.</p>"],
  ["높은 가격은 이탈 유인","$$p_1>p_2>c\\;\\Rightarrow\\;\\text{기업 1은 시장을 모두 잃음}\\;\\Rightarrow\\;p_1=p_2-\\varepsilon$$"],
