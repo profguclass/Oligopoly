@@ -29,6 +29,16 @@ const MODELS = [
       $$\\pi_1^S=\\frac{(a-c)^2}{8b},\\quad \\pi_2^S=\\frac{(a-c)^2}{16b}$$
       <p>파란 등이윤곡선이 추종자 반응함수에 접하는 점이 균형이다.</p>`,
     params:[...COMMON,["c1","선도자 한계비용 $c_1$",0,50,1,10],["c2","추종자 한계비용 $c_2$",0,50,1,10]] },
+  { id:"spne", fn:"spne", name:"부분게임완전균형", title:"그림 6-1: 생산량결정 복점모형의 부분게임완전균형",
+    theory:`<p>$k=(a-c)/b$로 두면 반응함수는 $q_i=\\dfrac{k}{2}-\\dfrac{q_j}{2}$이다. 그림의 다섯 점:</p>
+      $$M=\\Bigl(\\tfrac k4,\\tfrac k4\\Bigr),\\; C=\\Bigl(\\tfrac k3,\\tfrac k3\\Bigr),\\; S_1=\\Bigl(\\tfrac k2,\\tfrac k4\\Bigr),\\; S_2=\\Bigl(\\tfrac k4,\\tfrac k2\\Bigr),\\; W=\\Bigl(\\tfrac k2,\\tfrac k2\\Bigr)$$
+      <p>$S_1$은 기업 1이 선도자 수량 $\\tfrac{a-c}{2b}$를 정하고 기업 2가 반응함수 위에서 추종하는 점, $S_2$는 그 반대다. 둘 다 선도자 수량을 고르면 $W$에서 $P=c$가 되어 이윤은 0이다.</p>`,
+    params:[...COMMON,["c","한계비용 $c$",0,50,1,10]] },
+  { id:"timing", fn:"timing_game", name:"선도·추종 게임", title:"그림 6-2: 선도자와 추종자가 불명확한 스타켈베르크 복점모형",
+    theory:`<p>누가 선도자가 될지 정해져 있지 않을 때 각 기업이 \"선도\"와 \"추종\" 중 하나를 고른다. 보수(단위 $(a-c)^2/b$):</p>
+      $$\\begin{array}{c|cc} & \\text{2: 선도} & \\text{2: 추종}\\\\\\hline \\text{1: 선도} & 0,\\,0 & \\tfrac18,\\,\\tfrac1{16}\\\\ \\text{1: 추종} & \\tfrac1{16},\\,\\tfrac18 & \\tfrac19,\\,\\tfrac19\\end{array}$$
+      <p>순수전략 내시균형은 (선도, 추종)과 (추종, 선도) 두 개이고, 대칭 혼합전략 균형도 있다. 오른쪽 그림은 복제자 동학으로 시작점에 따라 어느 균형에 수렴하는지 시뮬레이션한 것이다.</p>`,
+    params:[...COMMON,["c","한계비용 $c$",0,50,1,10],["n_traj","시뮬레이션 횟수",1,40,1,16],["seed","난수 시드",1,50,1,3]] },
   { id:"differentiated", fn:"differentiated", name:"제품 차별화", title:"제품 차별화: 가격 경쟁 vs 수량 경쟁",
     theory:`<p>한계효용 $\\partial U/\\partial q_i=\\alpha-\\beta q_i-\\gamma q_j$ ($\\beta>\\gamma>0$)에서 역수요와 수요가 나온다.</p>
       $$P_i=\\alpha-\\beta q_i-\\gamma q_j,\\qquad D_i=a-b\\,p_i+d\\,p_j$$
@@ -64,6 +74,19 @@ const MODELS = [
 ];
 
 const STEPS = {
+spne:[
+ ["반응함수","$$R_1(q_2)=\\frac{a-c}{2b}-\\frac{q_2}{2},\\qquad R_2(q_1)=\\frac{a-c}{2b}-\\frac{q_1}{2}$$"],
+ ["담합점 $M$","$$M=\\Bigl(\\frac{a-c}{4b},\\frac{a-c}{4b}\\Bigr)$$<p>독점 생산량 $\\tfrac{a-c}{2b}$를 반씩 나눈다.</p>"],
+ ["쿠르노–내시 균형 $C$","$$C=\\Bigl(\\frac{a-c}{3b},\\frac{a-c}{3b}\\Bigr)$$<p>두 반응곡선의 교점이다.</p>"],
+ ["기업 1이 선도: $S_1$","$$q_1=\\frac{a-c}{2b}\\;\\Rightarrow\\;q_2=R_2(q_1)=\\frac{a-c}{4b}$$"],
+ ["기업 2가 선도: $S_2$","$$q_2=\\frac{a-c}{2b}\\;\\Rightarrow\\;q_1=R_1(q_2)=\\frac{a-c}{4b}$$"],
+ ["둘 다 선도자처럼 행동: $W$","$$q_1=q_2=\\frac{a-c}{2b}\\;\\Rightarrow\\;P=a-bQ=c,\\quad \\pi_1=\\pi_2=0$$"]],
+timing:[
+ ["보수 계산 (선도–추종)","$$\\pi_L=\\frac{(a-c)^2}{8b},\\qquad \\pi_F=\\frac{(a-c)^2}{16b}$$"],
+ ["보수 계산 (둘 다 추종 / 둘 다 선도)","$$\\pi^{FF}=\\frac{(a-c)^2}{9b},\\qquad \\pi^{LL}=0$$"],
+ ["최적 반응","<p>상대가 선도이면 추종($\\tfrac1{16}>0$)이, 상대가 추종이면 선도($\\tfrac18>\\tfrac19$)가 최선이다.</p>"],
+ ["순수전략 내시균형","$$(\\text{선도},\\text{추종}):\\ \\bigl(\\tfrac18,\\tfrac1{16}\\bigr),\\qquad (\\text{추종},\\text{선도}):\\ \\bigl(\\tfrac1{16},\\tfrac18\\bigr)$$<p>어느 쪽이 선도자가 될지는 게임만으로 정해지지 않는다(조정 문제).</p>"],
+ ["혼합전략 균형","<p>상대가 선도할 확률을 $q$라 하면 기업 1이 무차별할 조건은</p>$$(1-q)\\tfrac18=q\\tfrac1{16}+(1-q)\\tfrac19\\;\\Rightarrow\\;q^*=\\tfrac{2}{11}$$<p>대칭이므로 기업 2도 같고, 기대보수는 $\\tfrac{9}{88}(a-c)^2/b$이다.</p>"]],
 cournot:[
  ["이윤함수 전개","$$\\pi_1=[a-b(q_1+q_2)-c]\\,q_1=(a-c)\\,q_1-b\\,q_1^2-b\\,q_1q_2$$"],
  ["1계 조건 ($q_2$ 고정)","$$\\frac{\\partial\\pi_1}{\\partial q_1}=(a-c)-2b\\,q_1-b\\,q_2=0$$"],
