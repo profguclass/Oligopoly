@@ -488,48 +488,53 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     q1c, q2c = cournot_eq(a, b, c1, c2)
     pi1 = lambda x, y: (a - b * (x + y) - c1) * x
     pi2 = lambda x, y: (a - b * (x + y) - c2) * y
-    k1, k2 = pi1(q1c, q2c), pi2(q1c, q2c)
+    k1c, k2c = pi1(q1c, q2c), pi2(q1c, q2c)
     cm = min(c1, c2)
     qm = (a - cm) / (2 * b)
     mx, my = ((qm / 2, qm / 2) if c1 == c2 else (qm, 0) if c1 < c2 else (0, qm))
-    g = np.linspace(0.05, QZ, 800)
-    fig, ax = plt.subplots(1, 2, figsize=(11, 4.6))
+    k1m, k2m = pi1(mx, my), pi2(mx, my)
+    g = np.linspace(0.05, QZ, 900)
+    c1_curve = lambda k: (g, (a - c1) / b - g - k / (b * g))
+    c2_curve = lambda k: ((a - c2) / b - g - k / (b * g), g)
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.8))
     A = ax[0]
-    for f in (.1, .25, .45, .65, .85):
-        k = f * (a - c1) ** 2 / (4 * b)
-        y = (a - c1) / b - g - k / (b * g); m = y >= 0
-        A.plot(g[m], y[m], color=C1, lw=.9, alpha=.55)
-        k = f * (a - c2) ** 2 / (4 * b)
-        x = (a - c2) / b - g - k / (b * g); m = x >= 0
-        A.plot(x[m], g[m], color=C2, lw=.9, alpha=.55)
-    y = (a - c1) / b - g - k1 / (b * g); m = y >= 0
-    A.plot(g[m], y[m], color=C1, lw=2.4, label=f"firm 1: $\\pi_1$ = {k1:,.0f}")
-    x = (a - c2) / b - g - k2 / (b * g); m = x >= 0
-    A.plot(x[m], g[m], color=C2, lw=2.4, label=f"firm 2: $\\pi_2$ = {k2:,.0f}")
-    r = np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan)
-    A.plot(r, g, "--", color=C1, lw=1, label="R1 (peaks of firm 1 curves)")
-    r = np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan)
-    A.plot(g, r, "--", color=C2, lw=1, label="R2 (peaks of firm 2 curves)")
-    A.plot(q1c, q2c, "o", color="k", ms=8, label="Cournot")
-    A.set_xlim(0, QZ); A.set_ylim(0, QZ); A.set_xlabel("q1"); A.set_ylabel("q2")
-    A.set_title("Iso-profit curves of both firms"); A.legend(fontsize=7)
-    B = ax[1]
     X, Y = np.meshgrid(np.linspace(0, QZ, 400), np.linspace(0, QZ, 400))
-    lens = (pi1(X, Y) > k1) & (pi2(X, Y) > k2) & (X + Y < a / b)
-    B.contourf(X, Y, lens.astype(float), levels=[.5, 1.5], colors=[C3], alpha=.35)
-    for kk, col in ((k1, C1), (k2, C2)):
-        if col == C1:
-            y = (a - c1) / b - g - kk / (b * g); m = y >= 0; B.plot(g[m], y[m], color=col, lw=2)
-        else:
-            x = (a - c2) / b - g - kk / (b * g); m = x >= 0; B.plot(x[m], g[m], color=col, lw=2)
-    B.plot(q1c, q2c, "o", color="k", ms=8); B.annotate("C", (q1c, q2c), xytext=(6, 6), textcoords="offset points", weight="bold")
-    B.plot(mx, my, "*", color=C3, ms=14); B.annotate("M", (mx, my), xytext=(6, 6), textcoords="offset points", weight="bold")
-    B.set_xlim(0, QZ); B.set_ylim(0, QZ); B.set_xlabel("q1"); B.set_ylabel("q2")
-    B.set_title("Green lens: both firms earn more than at C")
-    in_lens = bool(pi1(mx, my) > k1 and pi2(mx, my) > k2)
-    rows = [("쿠르노 점 $C$의 이윤 $(\\pi_1^C,\\pi_2^C)$", f"{_f(k1)}, {_f(k2)}"),
+    lens = (pi1(X, Y) > k1c) & (pi2(X, Y) > k2c) & (X + Y < a / b)
+    A.contourf(X, Y, lens.astype(float), levels=[.5, 1.5], colors=[C3], alpha=.3)
+    r = np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan)
+    A.plot(r, g, color=C1, lw=1.4)
+    A.text(r[np.nanargmin(np.abs(g - 1.18 * QZ / 2))] + 1, QZ * .59, "$R_1$", color=C1, fontsize=12)
+    r = np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan)
+    A.plot(g, r, color=C2, lw=1.4)
+    A.text(QZ * .75, r[np.argmin(np.abs(g - QZ * .75))] + 2, "$R_2$", color=C2, fontsize=12)
+    for k, lw, ls in ((.4 * k1c, 1, "-"), (k1c, 2.4, "-"), (k1m, 1.2, "--")):
+        x, y = c1_curve(k); m = y >= 0
+        A.plot(x[m], y[m], color=C1, lw=lw, ls=ls)
+    for k, lw, ls in ((.4 * k2c, 1, "-"), (k2c, 2.4, "-"), (k2m, 1.2, "--")):
+        x, y = c2_curve(k); m = x >= 0
+        A.plot(x[m], y[m], color=C2, lw=lw, ls=ls)
+    A.annotate("", xy=(QZ * .93, 6), xytext=(QZ * .93, 30), arrowprops=dict(arrowstyle="->", color=C1))
+    A.text(QZ * .94, 30, "$\\pi_1$ rises", color=C1, fontsize=8)
+    A.annotate("", xy=(6, QZ * .93), xytext=(30, QZ * .93), arrowprops=dict(arrowstyle="->", color=C2))
+    A.text(30, QZ * .95, "$\\pi_2$ rises", color=C2, fontsize=8)
+    A.plot(q1c, q2c, "o", color="k", ms=8); A.annotate("C", (q1c, q2c), xytext=(7, 7), textcoords="offset points", weight="bold")
+    A.plot(mx, my, "*", color=C3, ms=14); A.annotate("M", (mx, my), xytext=(-14, -14), textcoords="offset points", weight="bold")
+    A.plot((a - c1) / (2 * b), 0, "s", color=C1, ms=5); A.plot(0, (a - c2) / (2 * b), "s", color=C2, ms=5)
+    A.set_xlim(0, QZ); A.set_ylim(0, QZ); A.set_xlabel("q1"); A.set_ylabel("q2")
+    A.set_title("Cournot: iso-profit curves (solid thick = through C, dashed = at M)", fontsize=9)
+    B = ax[1]
+    qg = np.linspace(0, QZ, 400)
+    for q2, col in ((0, "#93c5fd"), (q2c * .5, "#60a5fa"), (q2c, C1), (q2c * 1.8, "#1e3a8a")):
+        pi = (a - b * (qg + q2) - c1) * qg
+        B.plot(qg, pi, color=col, label=f"$q_2$ = {q2:,.0f}")
+        qs = max((a - c1) / (2 * b) - q2 / 2, 0)
+        B.plot(qs, (a - b * (qs + q2) - c1) * qs, "o", color=col)
+    B.set_xlim(0, QZ); B.set_ylim(0, 2500); B.set_xlabel("q1"); B.set_ylabel("$\\pi_1$")
+    B.set_title("Why curves peak on $R_1$: best $q_1$ for each $q_2$", fontsize=9); B.legend(fontsize=8)
+    in_lens = bool(k1m > k1c and k2m > k2c)
+    rows = [("쿠르노 점 $C$의 이윤 $(\\pi_1^C,\\pi_2^C)$", f"{_f(k1c)}, {_f(k2c)}"),
             ("$C$에서 기업 1 곡선의 접선", "수평 (꼭짓점)"),
             ("$C$에서 기업 2 곡선의 접선", "수직 (꼭짓점)"),
-            ("담합점 $M$ 이윤", f"{_f(pi1(mx, my))}, {_f(pi2(mx, my))}"),
+            ("담합점 $M$ 이윤", f"{_f(k1m)}, {_f(k2m)}"),
             ("$M$이 렌즈 안에 있는가", "예" if in_lens else "아니오")]
-    return _out(fig, rows, "쿠르노 점에서 두 기업의 등이윤곡선은 직각으로 만나 렌즈 모양의 영역을 만듭니다. 이 영역 안에서는 두 기업 모두 쿠르노보다 이윤이 높아 담합이 유인되지만, 담합점은 반응곡선 위가 아니므로 균형이 아닙니다.")
+    return _out(fig, rows, "기업 1의 등이윤곡선은 q2가 작을수록(아래쪽일수록) 이윤이 크고, 기업 2의 것은 q1이 작을수록(왼쪽일수록) 이윤이 큽니다. 쿠르노 점 C에서 두 굵은 곡선이 직각으로 만나 초록 렌즈 영역을 만들고, 이 안의 점(담합점 M 포함)에서는 두 기업 모두 C보다 이윤이 높습니다.")
