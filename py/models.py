@@ -37,7 +37,7 @@ def cournot_eq(a, b, c1, c2):
     return q1, q2
 
 
-def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
+def cournot(a=100, b=1, c1=10, c2=10, **_):
     br1 = lambda q2: np.maximum((a - c1) / (2 * b) - q2 / 2, 0)
     br2 = lambda q1: np.maximum((a - c2) / (2 * b) - q1 / 2, 0)
     q1e, q2e = cournot_eq(a, b, c1, c2)
@@ -61,19 +61,10 @@ def cournot(a=100, b=1, c1=10, c2=10, start1=5, start2=60, rounds=8):
     A = ax[0]
     A.plot(br1(g), g, color=C1, lw=5, label="R1 (firm 1 best response)")
     A.plot(g, br2(g), color=C2, lw=5, label="R2 (firm 2 best response)")
-    # 반응 경로(순차 조정)
-    x, y = start1, start2
-    path = [(x, y)]
-    for _ in range(int(rounds)):
-        x = float(br1(y)); path.append((x, y))
-        y = float(br2(x)); path.append((x, y))
-    px, py_ = zip(*path)
-    A.plot(px, py_, "-o", color=GR, ms=3, lw=1, label="adjustment path")
-    A.plot([start1], [start2], "s", color="k", ms=5)
     A.plot(q1e, q2e, "o", color="k", ms=9, label="Cournot-Nash")
     A.plot(qm1, qm2, "*", color=C3, ms=13, label="cartel")
     A.set_xlim(0, QAX); A.set_ylim(0, QAX)
-    A.set_xlabel("q1"); A.set_ylabel("q2"); A.set_title("Best responses & adjustment")
+    A.set_xlabel("q1"); A.set_ylabel("q2"); A.set_title("Best responses & equilibrium")
     A.legend(fontsize=7)
 
     # 담합 이탈
