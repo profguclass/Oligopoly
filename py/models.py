@@ -6,7 +6,8 @@ matplotlib.use("AGG")
 import matplotlib.pyplot as plt
 
 QAX, PAX = 200, 150  # 고정 축 범위
-PU, OR = "#7c3aed", "#ea580c"  # 등이윤곡선 색 (반응곡선 파랑·빨강과 구분)
+PU, OR = "#15803d", "#84cc16"  # 등이윤곡선 색: 초록 계열 (기업1 진한 초록, 기업2 연두)
+AM = "#d97706"  # 강조점(담합점·스타켈베르크 균형)
 C1, C2, C3, GR = "#2563eb", "#dc2626", "#16a34a", "#6b7280"
 plt.rcParams.update({"axes.grid": True, "grid.alpha": .25, "axes.spines.top": False,
                      "axes.spines.right": False, "font.size": 9})
@@ -173,7 +174,7 @@ def stackelberg(a=100, b=1, c1=10, c2=10):
         A.plot(g[y >= 0], y[y >= 0], color=PU, ls=ls, lw=1.2,
                label=f"iso-profit of 1 = {_f(k, 0)}")
     A.plot(q1c, q2c, "o", color="k", label="Cournot")
-    A.plot(q1s, q2s, "*", color=C3, ms=13, label="Stackelberg")
+    A.plot(q1s, q2s, "*", color=AM, ms=13, label="Stackelberg")
     A.set_xlim(0, QAX); A.set_ylim(0, QAX); A.set_xlabel("q1 (leader)"); A.set_ylabel("q2")
     A.set_title("Leader picks the best point on R2"); A.legend(fontsize=7)
     B = ax[1]
@@ -452,7 +453,7 @@ def isoprofit(a=100, b=1, c1=10, c2=10, **_):
         y = (a - c1) / b - g - k / (b * g)
         m = y >= 0
         special = abs(k - pi_s) < 1e-9 or abs(k - pi_c) < 1e-9
-        col = C3 if abs(k - pi_s) < 1e-9 else "k" if abs(k - pi_c) < 1e-9 else PU
+        col = AM if abs(k - pi_s) < 1e-9 else "k" if abs(k - pi_c) < 1e-9 else PU
         A.plot(g[m], y[m], color=col, lw=2.2 if special else 1, alpha=1 if special else .6)
         if m.any():
             i = int(np.argmax(y)); A.plot(g[i], y[i], ".", color=col, ms=5)
@@ -461,7 +462,7 @@ def isoprofit(a=100, b=1, c1=10, c2=10, **_):
     A.plot(np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan), g, "--", color=C1, lw=5, label="R1 = peaks of iso-profit curves")
     A.plot(g, np.where(g <= (a - c2) / b, (a - c2) / (2 * b) - g / 2, np.nan), color=C2, lw=5, label="R2 (follower)")
     A.plot(q1c, q2c, "o", color="k", label="Cournot")
-    A.plot(q1s, q2s, "*", color=C3, ms=14, label="Stackelberg (tangency)")
+    A.plot(q1s, q2s, "*", color=AM, ms=14, label="Stackelberg (tangency)")
     A.set_xlim(0, QZ); A.set_ylim(0, QZ)
     A.set_xlabel("q1 (leader)"); A.set_ylabel("q2")
     A.set_title("Iso-profit curves of firm 1 (labels = profit)"); A.legend(fontsize=7)
@@ -471,7 +472,7 @@ def isoprofit(a=100, b=1, c1=10, c2=10, **_):
     lead = (a - b * (q1g + q2r) - c1) * q1g
     B.plot(q1g, lead, color=C1)
     B.axhline(pi_c, color="k", ls=":", lw=1, label=f"Cournot profit {pi_c:,.0f}")
-    B.plot(q1s, pi_s, "*", color=C3, ms=14, label=f"leader's optimum q1 = {q1s:,.1f}")
+    B.plot(q1s, pi_s, "*", color=AM, ms=14, label=f"leader's optimum q1 = {q1s:,.1f}")
     B.set_xlim(0, QZ); B.set_ylim(-1000, 4000)
     B.set_xlabel("q1"); B.set_ylabel("π1 along follower's R2")
     B.set_title("Leader's problem: π1(q1, R2(q1))"); B.legend(fontsize=8)
@@ -480,7 +481,7 @@ def isoprofit(a=100, b=1, c1=10, c2=10, **_):
             ("접점의 등이윤 수준 $\\pi_1^S$", _f(pi_s)),
             ("쿠르노 점의 등이윤 수준 $\\pi_1^C$", _f(pi_c)),
             ("접점에서 $R_2$의 기울기", "$-1/2$")]
-    return _out(fig, rows, "등이윤곡선은 아래쪽일수록 기업 1의 이윤이 큽니다. 선도자는 추종자의 반응함수 R2와 접하는 가장 아래쪽 곡선(초록)을 고릅니다. 쿠르노 점은 R2 위에서 더 위쪽 곡선(검정)이라 이윤이 낮습니다.")
+    return _out(fig, rows, "등이윤곡선은 아래쪽일수록 기업 1의 이윤이 큽니다. 선도자는 추종자의 반응함수 R2와 접하는 가장 아래쪽 곡선(주황)을 고릅니다. 쿠르노 점은 R2 위에서 더 위쪽 곡선(검정)이라 이윤이 낮습니다.")
 
 
 # ------------------------------------------- 쿠르노: 두 기업의 등이윤곡선
@@ -501,7 +502,7 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     A = ax[0]
     X, Y = np.meshgrid(np.linspace(0, QZ, 400), np.linspace(0, QZ, 400))
     lens = (pi1(X, Y) > k1c) & (pi2(X, Y) > k2c) & (X + Y < a / b)
-    A.contourf(X, Y, lens.astype(float), levels=[.5, 1.5], colors=[C3], alpha=.3)
+    A.contourf(X, Y, lens.astype(float), levels=[.5, 1.5], colors=[AM], alpha=.3)
     r = np.where(g <= (a - c1) / b, (a - c1) / (2 * b) - g / 2, np.nan)
     A.plot(r, g, color=C1, lw=5)
     yl = QZ * .6
@@ -521,13 +522,13 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     A.annotate("", xy=(6, QZ * .93), xytext=(30, QZ * .93), arrowprops=dict(arrowstyle="->", color=OR))
     A.text(30, QZ * .95, "$\\pi_2$ rises", color=OR, fontsize=8)
     A.plot(q1c, q2c, "o", color="k", ms=8); A.annotate("C", (q1c, q2c), xytext=(7, 7), textcoords="offset points", weight="bold")
-    A.plot(mx, my, "*", color=C3, ms=14); A.annotate("M", (mx, my), xytext=(-14, -14), textcoords="offset points", weight="bold")
+    A.plot(mx, my, "*", color=AM, ms=14); A.annotate("M", (mx, my), xytext=(-14, -14), textcoords="offset points", weight="bold")
     A.plot((a - c1) / (2 * b), 0, "s", color=PU, ms=5); A.plot(0, (a - c2) / (2 * b), "s", color=OR, ms=5)
     A.set_xlim(0, QZ); A.set_ylim(0, QZ); A.set_xlabel("q1"); A.set_ylabel("q2")
     A.set_title("Cournot: iso-profit curves of both firms\n(thick = through C, dashed = through M)", fontsize=10)
     B = ax[1]
     qg = np.linspace(0, QZ, 400)
-    for q2, col in ((0, "#ddd6fe"), (q2c * .5, "#a78bfa"), (q2c, PU), (q2c * 1.8, "#3b0764")):
+    for q2, col in ((0, "#bbf7d0"), (q2c * .5, "#4ade80"), (q2c, PU), (q2c * 1.8, "#052e16")):
         pi = (a - b * (qg + q2) - c1) * qg
         B.plot(qg, pi, color=col, label=f"$q_2$ = {q2:,.0f}")
         qs = max((a - c1) / (2 * b) - q2 / 2, 0)
@@ -540,4 +541,4 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
             ("$C$에서 기업 2 곡선의 접선", "수직 (꼭짓점)"),
             ("담합점 $M$ 이윤", f"{_f(k1m)}, {_f(k2m)}"),
             ("$M$이 렌즈 안에 있는가", "예" if in_lens else "아니오")]
-    return _out(fig, rows, "기업 1(보라)의 등이윤곡선은 q2가 작을수록(아래쪽일수록) 이윤이 크고, 기업 2(주황)의 것은 q1이 작을수록(왼쪽일수록) 이윤이 큽니다. 쿠르노 점 C에서 두 굵은 곡선이 직각으로 만나 초록 렌즈 영역을 만들고, 이 안의 점(담합점 M 포함)에서는 두 기업 모두 C보다 이윤이 높습니다.")
+    return _out(fig, rows, "기업 1(진한 초록)의 등이윤곡선은 q2가 작을수록(아래쪽일수록) 이윤이 크고, 기업 2(연두)의 것은 q1이 작을수록(왼쪽일수록) 이윤이 큽니다. 쿠르노 점 C에서 두 굵은 곡선이 직각으로 만나 주황빛 렌즈 영역을 만들고, 이 안의 점(담합점 M 포함)에서는 두 기업 모두 C보다 이윤이 높습니다.")
