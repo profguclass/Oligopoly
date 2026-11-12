@@ -509,10 +509,10 @@ def isoprofit_cournot(a=100, b=1, c1=10, c2=10, **_):
     A.plot(g, r, color=C2, lw=1.4)
     xl = QZ * .75
     A.text(xl, max((a - c2) / (2 * b) - xl / 2, 0) + 3, "$R_2$", color=C2, fontsize=12)
-    for k, lw, ls in ((.4 * k1c, 1, "-"), (k1c, 2.4, "-"), (k1m, 1.2, "--")):
+    for k, lw, ls in ((k1c, 2.4, "-"), (k1m, 1.6, "--")):
         x, y = c1_curve(k); m = y >= 0
         A.plot(x[m], y[m], color=C1, lw=lw, ls=ls)
-    for k, lw, ls in ((.4 * k2c, 1, "-"), (k2c, 2.4, "-"), (k2m, 1.2, "--")):
+    for k, lw, ls in ((k2c, 2.4, "-"), (k2m, 1.6, "--")):
         x, y = c2_curve(k); m = x >= 0
         A.plot(x[m], y[m], color=C2, lw=lw, ls=ls)
     A.annotate("", xy=(QZ * .93, 6), xytext=(QZ * .93, 30), arrowprops=dict(arrowstyle="->", color=C1))
